@@ -8,7 +8,8 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 
 from .helpers import login_required, pwd_match
 from .models.users import *
-from .models.movies import Movie, Serie
+from .models.serie import Serie
+from .models.movies import Movie
 
 app = Flask(__name__)
 
@@ -40,18 +41,17 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/movies/<imdb_id>/", methods=["GET", "POST"])
-def movies(imdb_id):
+@app.route("/movies/<tmdb_id>/", methods=["GET", "POST"])
+def movies(tmdb_id):
     """ Movie page """
     with app.app_context():
         user_id = session.get("user_id")
-        media = Media()
-        movie = media.lookup_movie(imdb_id)
-
+        movie = Movie()
+        movie_data = movie.check_and_retrieve_database(tmdb_id)[0]
 
     if request.method == "GET":
         #return movie_data
-        return render_template("movie.html", movie=movie)
+        return render_template("movie.html", movie=movie_data)
 
     pass
 
