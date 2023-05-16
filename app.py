@@ -10,6 +10,8 @@ from .helpers import login_required, pwd_match
 from .models.users import *
 from .models.serie import Serie
 from .models.movies import Movie
+from .models.episodes import Episode
+from .models.seasons import Season
 
 app = Flask(__name__)
 
@@ -62,8 +64,29 @@ def series(tmdb_id):
     with app.app_context():
         user_id = session.get("user_id")
         serie = Serie()
-        serie.add_serie_database(tmdb_id)
-        serie.lookup_season(tmdb_id, 1)
+        serie_data = serie.check_and_retrieve_database(tmdb_id)[0]
+
+    if request.method == "GET":
+        return render_template("serie.html", serie=serie_data)
+
+    pass
+
+
+@app.route("/series/<tmdb_id>/season/<season_nr>/", methods=["GET", "POST"])
+def season(tmdb_id, season_nr):
+    """ Season page """
+    with app.app_context():
+        user_id = session.get("user_id")
+        season = Season()
+        season_data = season.check_and_retrieve_database(tmdb_id, season_nr)[0]
+
+
+@app.route("/series/<tmdb_id>/season/<season_nr>/episode/<episode_nr>", methods=["GET", "POST"])
+def episode(tmdb_id, season_nr, episode_nr):
+    """ Series page """
+    with app.app_context():
+        user_id = session.get("user_id")
+        episode = Episode()
 
     if request.method == "GET":
         return render_template("series.html", serie=serie)

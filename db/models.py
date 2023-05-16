@@ -38,6 +38,12 @@ class Serie(db.Model):
     video_key = db.Column(db.String, nullable=True)
     video_site = db.Column(db.String, nullable=True)
 
+class Season(db.Model):
+    __tablename__ = "seasons"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    tmdb_id = db.Column(db.String, nullable=False)
+    title = db.Column(db.String, nullable=False)
+
 
 class Episode(db.Model):
     __tablename__ = "episodes"
@@ -88,9 +94,10 @@ class Director(db.Model):
 #     tmdb_id = db.Column(db.String, nullable=False)
 
 
-class List(db.Model):
-    __tablename__ = "lists"
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    tmdb_id = db.Column(db.String, nullable=False)
-    title = db.Column(db.String, nullable=False)
-    add_date = db.Column(db.DateTime, nullable=False)
+# class List(db.Model):
+#     __tablename__ = "lists"
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     tmdb_id = db.Column(db.String, nullable=False)
+#     title = db.Column(db.String, nullable=False)
+#     add_date = db.Column(db.DateTime, nullable=False)
+
