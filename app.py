@@ -12,6 +12,7 @@ from .models.serie import Serie
 from .models.movies import Movie
 from .models.episodes import Episode
 from .models.seasons import Season
+from .models.search import Search
 
 app = Flask(__name__)
 
@@ -36,6 +37,25 @@ def after_request(response):
     response.headers["Expires"] = 0
     response.headers["Pragma"] = "no-cache"
     return response
+
+@app.route("/search", methods=["GET", "POST"])
+def search():
+    if request.method == "GET":
+        return render_template("search.html")
+
+    else:
+        page_nr = request.form.get("page_nr")
+        search_value = request.form.get("search")
+        search_type = request.form.get("search_type")
+        search = Search()
+
+        if search_type == "movies":
+            results = search.search_movies(search_value, page_nr)
+            return render_template("searched.html", results=results, search_type=search_type)
+
+        elif search_type == "series":
+            results = search.search_series(search_value, page_nr)
+            return render_template("searched.html", results=results, search_type=search_type)
 
 
 @app.route("/")
@@ -79,6 +99,8 @@ def season(tmdb_id, season_nr):
         user_id = session.get("user_id")
         season = Season()
         season_data = season.check_and_retrieve_database(tmdb_id, season_nr)[0]
+    if request.method == "GET":
+        return render_template("season.html", season=season_data)
 
 
 @app.route("/series/<tmdb_id>/season/<season_nr>/episode/<episode_nr>", methods=["GET", "POST"])
@@ -87,9 +109,10 @@ def episode(tmdb_id, season_nr, episode_nr):
     with app.app_context():
         user_id = session.get("user_id")
         episode = Episode()
+        episode_data = episode.check_and_retrieve_database(tmdb_id, season_nr, episode_nr)
 
     if request.method == "GET":
-        return render_template("series.html", serie=serie)
+        return render_template("episode.html ", episode=episode_data)
 
     pass
 

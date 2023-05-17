@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+
+{% block main %}
+<p>
+  <img src="https://image.tmdb.org/t/p/w200{{ serie.poster_path }}" alt="poster_image"></img>
+</p>
+{{ serie.serie_title }}
+<h>{{ serie.title }}</h>
+<p>{{ serie.first_air_date }} - {{ serie.last_air_date }}
+  {% if serie.tagline %}
+<p></p> {{ serie.tagline }}
+{% endif %}
+{{ serie.spoken_languages }}
+{% endblock %}

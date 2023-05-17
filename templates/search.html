@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Search
+{% endblock %}
+
+{% block main %}
+
+
+<form action="/search" method="post">
+  <div class="mb-3">
+    <input autocomplete="on" autofocus class="form-control mx-auto w-auto" id="search" name="search" placeholder="search" type="text">
+  </div><br>
+
+  <input type="radio" id="movies" name="search_type" value="movies">
+  <label for="movies">movies</label><br>
+  <input type="radio" id="series" name="search_type" value="series">
+  <label for="series">series</label><br>
+  <input type="hidden" name="page_nr" value="1">
+  <button class="btn btn-primary" type="submit">Search</button><br>
+
+</form>
+
+{% endblock %}

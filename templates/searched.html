@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+
+{% block main %}
+<table>
+  <tr>
+    <th>total results</th><td>{{ results["total_results"] }}</td>
+    <th>page</th><td>{{ results["page"] }}</td>
+  </tr>
+  {% for item in results["results"]%}
+  <tr>
+    <td>
+      <a href="/{{ search_type }}/{{item["id"] }}">
+	<b> {{ item["title"] }}
+    </td>
+
+    <td>
+      {% if item["backdrop_path"] %}
+      <img src="https://image.tmdb.org/t/p/w200{{ item["backdrop_path"] }}" alt="poster_image"></img>
+      {% endif %}
+    </td>
+
+  </tr>
+  {% endfor %}
+</table>
+<nav aria-label="page navigation">
+  <ul class="pagination">
+    {% for page in range(results["total_pages"]) %}
+
+    <li class="page-item">
+      <form action="/search" method="post">
+	<input type="hidden" id="movies" name="search_type" value="{{ search_type }}">
+	<input type="hidden" id="movies" name="page" value="{{ page }}">
+	<input type="hidden" id="movies" name="search_value" value={{ search_value }}>
+	{% if results["page"] == page %}
+	<button class="btn btn-secondary" type="submit" disabled>
+	  {{ page }}
+	</button>
+	{% else %}
+	<button class="btn btn-primary" type="submit">
+	  {{ page }}
+	</button>
+	{% endif %}
+    </li>
+    {% endfor %}
+    </form>
+  </ul>
+
+</nav>
+{% endblock %}

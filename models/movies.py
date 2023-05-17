@@ -13,7 +13,6 @@ class Movie():
         # query movie details
         response = requests.get(f"https://api.themoviedb.org/3/movie/{tmdb_id}?api_key=669cfa65918d52531e6700a94982ea26&append_to_response=videos,images")
         data = response.json()
-
         # return details if found successfully
         if self.successful_tmdb(data):
             return data

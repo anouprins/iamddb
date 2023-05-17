@@ -38,11 +38,17 @@ class Serie(db.Model):
     video_key = db.Column(db.String, nullable=True)
     video_site = db.Column(db.String, nullable=True)
 
+
 class Season(db.Model):
     __tablename__ = "seasons"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     tmdb_id = db.Column(db.String, nullable=False)
     title = db.Column(db.String, nullable=False)
+    serie_title = db.Column(db.String, nullable=False)
+    episodes_amt = db.Column(db.Integer, nullable=False)
+    air_date = db.Column
+    poster_path = db.Column(db.String, nullable=True)
+    season_nr = db.Column(db.Integer, nullable=False)
 
 
 class Episode(db.Model):
