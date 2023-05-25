@@ -8,7 +8,13 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 
 from .helpers import login_required, pwd_match
 from .models.users import *
-from .models.movies import Movie, Serie
+from .models.serie import Serie
+from .models.movies import Movie
+from .models.episodes import Episode
+from .models.seasons import Season
+from .models.search import Search
+from .models.to_watch import Watchlist
+from .models.watched import Watched
 
 app = Flask(__name__)
 
@@ -35,38 +41,230 @@ def after_request(response):
     return response
 
 
+@app.route("/search", methods=["GET", "POST"])
+def search():
+    if request.method == "GET":
+        return render_template("search.html")
+
+    else:
+        page_nr = request.form.get("page_nr")
+        search_value = request.form.get("search_value")
+        search_type = request.form.get("search_type")
+        search = Search()
+
+        if search_type == "movies":
+            results = search.search_movies(search_value, page_nr)
+            return render_template("searched.html", results=results, search_type=search_type, search_value=search_value)
+
+        elif search_type == "series":
+            results = search.search_series(search_value, page_nr)
+            return render_template("searched.html", results=results, search_type=search_type, search_value=search_value)
+
+        else:
+            return render_template("search.html")
+
+
 @app.route("/")
 def index():
     return render_template("index.html")
 
 
-@app.route("/movies/<imdb_id>/", methods=["GET", "POST"])
-def movies(imdb_id):
+@app.route("/watchlist", methods=["GET"])
+@login_required
+def watchlist():
+    """ Watchlist page """
+    with app.app_context():
+        user_id = session.get("user_id")
+        watchlist = Watchlist()
+
+        watchlist_tmdb = watchlist.get_all_items_user(user_id)
+
+        movies = Movie()
+        series = Serie()
+
+        watchlist_data = {}
+
+        # add each media object to watched dict
+        for item in watchlist_tmdb:
+            if item[1] == "movie":
+                movie = movies.check_and_retrieve_database(item[0])
+                watchlist_data[movie[0].tmdb_id] = movie
+
+            elif item[1] == "serie":
+                serie = series.check_and_retrieve_database(item[0])
+                watchlist_data[serie[0].tmdb_id] = serie
+
+    if request.method == "GET":
+        return render_template("watchlist.html", watchlist_data=watchlist_data)
+
+
+@app.route("/watched", methods=["GET"])
+@login_required
+def watched():
+    """ Watched page """
+    user_id = session.get("user_id")
+    user = User()
+    username = user.get_username(user_id)
+
+    with app.app_context():
+        watched = Watched()
+        watched_tmdb = watched.get_all_items_user(user_id)
+
+        movies = Movie()
+        series = Serie()
+
+        watched_data = {}
+
+        # add each media object to watched dict
+        for item in watched_tmdb:
+            if item.media_type == "movie":
+                movie = movies.check_and_retrieve_database(item.tmdb_id)
+                watched_data[movie[0].tmdb_id] = movie
+
+            elif item.media_type == "serie":
+                serie = series.check_and_retrieve_database(item.tmdb_id)
+                watched_data[serie[0].tmdb_id] = serie
+
+
+    if request.method == "GET":
+        return render_template("watched.html", watched_data=watched_data, username=username)
+
+
+
+@app.route("/movies/<tmdb_id>/", methods=["GET", "POST"])
+@login_required
+def movies(tmdb_id):
     """ Movie page """
     with app.app_context():
         user_id = session.get("user_id")
-        media = Media()
-        movie = media.lookup_movie(imdb_id)
+        movie = Movie()
+        movie_data = movie.check_and_retrieve_database(tmdb_id)[0]
+
+        if user_id:
+            user = User()
+            username = user.get_username(user_id)
+
+        else:
+            username = ""
 
 
     if request.method == "GET":
-        #return movie_data
-        return render_template("movie.html", movie=movie)
+        return render_template("movie.html", movie=movie_data, username=username)
 
-    pass
+    else:
+        list_type = request.form.get("list_value")
+        media_type = "movie"
+
+        if list_type == 'add to watchlist':
+            watchlist = Watchlist()
+            watchlist.add_item(tmdb_id, user_id, media_type)
+
+        elif list_type == 'watched':
+            watched = Watched()
+            watched.add_item(tmdb_id, user_id, media_type)
+        return render_template("movie.html", movie=movie_data, username=username)
+
 
 
 @app.route("/series/<tmdb_id>/", methods=["GET", "POST"])
+@login_required
 def series(tmdb_id):
     """ Series page """
     with app.app_context():
-        user_id = session.get("user_id")
+
+        # make models to work with database
         serie = Serie()
-        serie.add_serie_database(tmdb_id)
-        serie.lookup_season(tmdb_id, 1)
+        season = Season()
+
+        # extract serie data
+        serie_data = serie.check_and_retrieve_database(tmdb_id)[0]
+
+
+        # extract data and add all seasons from database to dict
+        season_data = {}
+        for season_nr in range(1, serie_data.seasons_amt+1):
+            season_details = serie.lookup_season_tmdb(tmdb_id, season_nr)
+            season_data[season_nr] = len(season_details["episodes"])
+
+
+        # extract username
+        user_id = session.get("user_id")
+        if user_id:
+            user = User()
+            username = user.get_username(user_id)
+
+        else:
+            username = ""
 
     if request.method == "GET":
-        return render_template("series.html", serie=serie)
+        return render_template("serie.html", serie=serie_data, username=username, season_data=season_data)
+
+    else:
+        list_type = request.form.get("list_value")
+        media_type = "serie"
+        submit_value = request.form.get("submit_value")
+        checked_episodes = [form_value[form_value.index('_') + 1:] for form_value in request.form if form_value.startswith('episode')]
+
+        episodes = Episode()
+        for episode in checked_episodes:
+            # extract season_nr and episode_nr from form values
+            season_nr = episode[:episode.index('.')]
+            episode_nr = episode[episode.index('.')+1:]
+
+            # set episode as watched in database
+            episodes.add_watched(tmdb_id, season_nr, episode_nr, user_id)
+
+        if list_type == 'add to watchlist':
+            watchlist = Watchlist()
+            watchlist.add_item(tmdb_id, user_id, media_type)
+
+        elif list_type == 'watched':
+            watched = Watched()
+            watched.add_item(tmdb_id, user_id, media_type)
+
+        elif submit_value == "watched_episodes":
+            breakpoint()
+            episodes = Episode()
+
+        return render_template("serie.html", serie=serie_data, username=username, season_data=season_data)
+
+
+@app.route("/series/<tmdb_id>/season/<season_nr>/", methods=["GET", "POST"])
+def season(tmdb_id, season_nr):
+    """ Season page """
+    with app.app_context():
+        user_id = session.get("user_id")
+        season = Season()
+        season_data = season.check_and_retrieve_database(tmdb_id, season_nr)[0]
+
+        if user_id:
+            user = User()
+            username = user.get_username(user_id)
+
+        else:
+            username = ""
+
+    if request.method == "GET":
+        return render_template("season.html", season=season_data, username=username)
+
+
+@app.route("/series/<tmdb_id>/season/<season_nr>/episode/<episode_nr>", methods=["GET", "POST"])
+def episode(tmdb_id, season_nr, episode_nr):
+    """ Series page """
+    with app.app_context():
+        user_id = session.get("user_id")
+        episode = Episode()
+        episode_data = episode.check_and_retrieve_database(tmdb_id, season_nr, episode_nr)
+
+        if user_id:
+            user = User()
+            username = user.get_username(user_id)
+
+        else:
+            username = ""
+
+    if request.method == "GET":
+        return render_template("episode.html ", episode=episode_data, username=username)
 
     pass
 
@@ -139,7 +337,7 @@ def login():
         session["user_id"] = user.get_id_user(username)
 
         # Redirect user to home page
-        return redirect("/")
+        return render_template("index.html", username=username)
 
 
 @app.route("/logout")

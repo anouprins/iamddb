@@ -1,12 +1,15 @@
 {% extends "layout.html" %}
 
 {% block main %}
-<h>{{ movie["original_title"] }}</h>
-<p>{{ movie["overview"] }}
-<p></p> {{movie["videos"]["results"] }}
-{% if movie["videos"]["results"] %}
- <iframe width="420" height="315"
-src=f"{{ movie["videos"]["results"] }}">
- </iframe>
- {% endif %}
+<p>
+  <img src="https://image.tmdb.org/t/p/w200{{ movie.poster_path }}" alt="poster_image"></img>
+</p>
+
+<h>{{ movie.title }}</h>
+<p>{{ movie.release_date }}
+  {% if movie.tagline %}
+<p></p> {{ movie.tagline }}
+{% endif %}
+{{ movie.spoken_languages }}
+{{movie.poster_path}}
 {% endblock %}

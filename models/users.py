@@ -1,6 +1,6 @@
-from helpers import *
-from db.models import User as UserDB
-from db.models import db
+from ..helpers import *
+from ..db.models import User as UserDB
+from ..db.models import db
 
 
 class User():
