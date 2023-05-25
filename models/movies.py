@@ -7,6 +7,7 @@ from ..db.models import Movie as MovieDB, Genre as GenreDB, People as PeopleDB, 
 
 """ Functions to get movie data from tmbd Api database"""
 
+
 class Movie():
     def lookup_movie_tmdb(self, tmdb_id: str) -> Union[dict, None]:
         """ Returns all movie information in json using TMDB Api """

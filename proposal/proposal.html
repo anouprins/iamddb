@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<title>proposal.html</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+
+</head>
+
+<body>
+
+<h1>Probleem</h1>
+
+<p>Bij het zoeken van nieuwe films die niet alleen beschikbaar zijn bij Netflix of een andere streaming service, is ImdB vaak de eerste om info over leuke nieuwe films en series te vinden.
+Wat ik alleen mis bij de ImdB app, is dat ik zo'n grote lijst heb staan, dat ik niet meer weet welke films ik gezien heb en welke niet. Ook zou ik het fijn vinden om mijn bewaarde films/series te kunnen filteren per genre.
+Ik denk niet dat ik de enige ben die dit probleem met films kijken heeft. Vrienden in mijn omgeving gebruiken zelfs google docs, of gekke sheets in Excel om bij te houden welke films, per genre, ze gekeken hebben(1) en niet gekeken hebben(0). Dit moet beter kunnen.</p>
+
+<h1>Gebruikers</h1>
+
+<p>De verwachte gebruikers van deze applicatie zijn filmfanaten. Omdat ik gebruik wil maken van de Imdb account gegevens, zijn het voornamelijk mensen die al een imdB account hebben, of bereid zijn een aan te maken.</p>
+
+<h1>Setting</h1>
+
+<p>In mijn verwachting is dit een applicatie die gebruikers zullen gebruiken op het moment dat ze een film willen kijken. Dus even snel kijken welke films er allemaal op mijn lijst staan. </p>
+
+<p>Verder zou de app ook gebruikt kunnen worden in het geval van het plannen van films kijken. Beetje research doen naar nieuwe films, en die in je "nog niet gekeken"/(0) box zetten.</p>
+
+<h1>Verbetering</h1>
+
+<p>Vergeleken de imdB app, zou het met deze app makkelijker zijn om een persoonlijke bibliotheek van series en films bij te houden. Deze app zal namelijk bijhouden welke films er al gezien zijn en welke nog niet. Dit maakt het makkelijk als een gebruiker een nieuwe film wil kijken, om te zoeken in de lijst met films die er nog niet gezien zijn. Ook is het makkelijk om te filteren door de films per genre. 
+Omdat de app opgestart wordt wordt tijdens het bekijken van de film is het makkelijker om via deze website reviews te geven.</p>
+
+<h1>Oplossing</h1>
+
+<p>Deze app zal het gemakkelijker maken om als kijker persoonlijke kijk -geschiedenis - en -toekomst bij te houden. Op deze manier blijf je onafhankelijk van streamingservices zoals Netflix en kan je doelgericht zoeken naar films die in jou categorie passen en gelijk opslaan. </p>
+
+<p>Later kan je die films weer opzoeken uit verschillende categorieen: gekeken(1)/ongekeken(0)/totaal(1/0). Daarin zullen er filters zijn met verschillende genres die je aankunt vinken.</p>
+
+<h1>Features</h1>
+
+<h2>Cruciale features</h2>
+
+<ul>
+<li>login: deze feature is nodig om je persoonlijke lijst met films en series op te slaan per user</li>
+</ul>
+
+<p><img src="login.jpeg" style="width: 50%;"></p>
+
+<ul>
+<li><p>logout: deze feature is nodig zodat je je kan uitloggen en inloggen voor het opslaan van je persoonlijke lijsten met films en series</p></li>
+<li><p>register: om te kunnen in te loggen moet je je eerst registreren</p></li>
+</ul>
+
+<p><img src="register.jpeg" style="width: 50%;"></p>
+
+<ul>
+<li>search (movies): het zoeken van films en series is cruciaal om films en series te vinden, hier gaan ook filters bij gepaard.</li>
+</ul>
+
+<p><img src="search.jpeg" style="width: 50%;"></p>
+
+<ul>
+<li>results (from search): de resultaten van search is nodig om te kunnen kijken welke films en series relevant kunnen zijn aan je zoektocht zodat je ze vandaar op de film kunt klikken die je wil bekijken.</li>
+</ul>
+
+<p><img src="search_post.jpeg" style="width: 50%;"></p>
+
+<ul>
+<li>film/serie page: hier kun je een totaalplaatje zien van de serie of film. De info zoals jaar, cast, kleine uitleg, directors, plaatje en trailer, reviews. 
+Maar ook persoonlijke informatie zoals of de film in je 0/1 lijst staat. </li>
+<li><ul>
+<li>submit reviews</li>
+</ul></li>
+<li><ul>
+<li>submit want to watch (0)</li>
+</ul></li>
+<li><ul>
+<li>submit watch now - (betekent ook: 1)</li>
+</ul></li>
+</ul>
+
+<p><img src="movie_page.jpeg" style="width: 50%;"></p>
+
+<p><img style="width: 50%;" src="movie_page_2.jpeg"></p>
+
+<ul>
+<li>list: total: hier zullen alle films en series zitten die je hebt opgeslagen.</li>
+</ul>
+
+<p><img style="width: 50%;" src="watchlist.jpeg"></p>
+
+<ul>
+<li><ul>
+<li>0: to watch: Hier zitten alle films die nog niet gezien zijn.</li>
+</ul></li>
+</ul>
+
+<p><img style="width: 50%;" src="to_watch.jpeg"></p>
+
+<ul>
+<li><ul>
+<li>1: watched: Hier zitten alle films die al gezien zijn, samen met het aantal keer gekeken. In deze lijst kan je ook het aantal aanpassen, net als in een online boodschappenmand.</li>
+</ul></li>
+</ul>
+
+<p><img style="width: 50%;" src="watched.jpeg"></p>
+
+<h2>Secondary features</h2>
+
+<ol>
+<li><p>cast: met deze feature kan je zien wie er in de film heeft gespeeld</p></li>
+<li><p>trailer: met gebruik van een trailer api, zullen trailers opgeroepen worden en in de film/serie pagina komen te staan.</p></li>
+<li><p>popularity: met deze feature worden jou series en films uit de lijsten vergeleken met de ratings van IMDb, waardoor je kunt zien hoe populair jou keuzes zijn als je in je lijst zit. Het is dus een sort by filter.</p></li>
+<li><p>top genres: deze feature bekijkt de lijst met gekeken films en series, en haalt daar een top 5 genres uit.</p></li>
+<li><p>hoeveelheids-meter: met deze feature worden de meestgekeken films neergezet.</p></li>
+<li><p>quotes: by using a different api, this feature shows well known quotes on the page of a series/film</p></li>
+</ol>
+
+<h1>Requirements</h1>
+
+<h2>Gegevensbronnen</h2>
+
+<ul>
+<li><p>movies and series api: https://rapidapi.com/SAdrian/api/moviesdatabase/details of https://rapidapi.com/utelly/api/utelly/</p>
+
+<ul>
+<li>deze zijn beiden gratis en openbaar downloadbaar.</li>
+</ul></li>
+<li><p>imdb ratings, cast info, production info, genres info: https://www.imdb.com/interfaces/</p>
+
+<ul>
+<li>deze api's zijn openbaar downloadbaar.</li>
+</ul></li>
+<li><p>poster api: https://www.myapifilms.com/posters.do of https://theposterdb.com/posters/requests</p>
+
+<ul>
+<li>beiden opties zijn gratis en openbaar downloadbaar.</li>
+</ul></li>
+<li><p>quotes api: https://rapidapi.com/juanroldan1989/api/moviequotes/</p>
+
+<ul>
+<li>deze is ook gratis en openbaar downloadbaar.</li>
+</ul></li>
+</ul>
+
+<h2>Externe componenten</h2>
+
+<ul>
+<li><p>sqlalchemy: om queries in python aan te roepen voor het zoeken naar data uit mijn persoonlijke database</p></li>
+<li><p>bootstrap: dit zal het maken van een responsive website faciliteren in html</p></li>
+</ul>
+
+<h1>Moeilijkheden</h1>
+
+<ul>
+<li><p>Het zal moeilijk worden een soepele User Interface te maken voor de website in de tijd die ik ga hebben. Ik wil dat de website tegelijkertijd heel simpel is, niet te veel overbodige informatie, daar is IMDb voor. </p></li>
+<li><p>Verder zal het een uitdaging worden om ratings van IMDb te vergelijken met persoonlijke lijsten.</p></li>
+</ul>
+
+</body>
+</html>

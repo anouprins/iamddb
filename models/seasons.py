@@ -12,7 +12,7 @@ class Season():
     def lookup_season_iamddb(self, tmdb_id: str, season_nr: int) -> Union[dict, None]:
         """ Returns all movie information in json using TMDB Api """
         # query serie details
-        season = SeasonDB.query.filter(tmdb_id==tmdb_id, season_nr==season_nr).all()
+        season = SeasonDB.query.filter(SeasonDB.tmdb_id==tmdb_id, SeasonDB.season_nr==season_nr).all()
         return season
 
     def lookup_season_tmdb(self, tmdb_id: str, season_nr: int) -> Union[list, None]:
@@ -48,33 +48,13 @@ class Season():
 
     def in_database_iamddb(self, tmdb_id: str, season_nr: int) -> bool:
         """ Returns True if all episodes of series are stored in iamddb database """
-        season = SeasonDB.query.filter(tmdb_id==tmdb_id, season_nr==season_nr).all()
+
+        season = SeasonDB.query.filter(SeasonDB.tmdb_id==tmdb_id, SeasonDB.season_nr==season_nr).all()
 
         if season == []:
             return False
 
         return True
-
-    # def lookup_serie_title_tmdb(self, tmdb_id: str) -> str:
-    #     """ Returns serie name from tmdb database """
-    #     response = requests.get(f"https://api.themoviedb.org/3/tv/{tmdb_id}?api_key=669cfa65918d52531e6700a94982ea26&append_to_response=videos,images, aggregate_credits")
-    #     data = response.json()
-    #     return data["name"]
-
-    # def lookup_serie_title_iamddb(self, tmdb_id: str) -> str:
-    #     """ Returns serie name from iamddb database """
-    #     serie = SerieDB.query.filter_by(tmdb_id=tmdb_id).all()
-    #     breakpoint()
-
-    # def lookup_serie_title(self, tmdb_id: str) -> str:
-    #     """ Returns serie name """
-    #     if self.serie_in_database_iamddb(tmdb_id) is False:
-    #         serie_title = self.lookup_serie_title_tmdb(tmdb_id)
-
-    #     else:
-    #         serie_title = self.lookup_serie_title_iamddb(tmdb_id)
-
-    #     return serie_title
 
     def serie_in_database_iamddb(self, tmdb_id: str) -> bool:
         """ Returns True if serie in iamddb database"""
@@ -97,7 +77,6 @@ class Season():
         season_nr = details["season_number"]
 
         if not poster_path:
-            
             # add season object
             season = SeasonDB(tmdb_id=tmdb_id,
                               title=title,
@@ -107,18 +86,14 @@ class Season():
                               air_date=air_date,
                               season_nr=season_nr)
 
+        # add serie object
+        season = SeasonDB(tmdb_id=tmdb_id,
+                          title=title,
+                          serie_title=serie_title,
+                          episodes_amt=episodes_amt,
+                          poster_path=poster_path,
+                          air_date=air_date,
+                          season_nr=season_nr)
+
         db.session.add(season)
         db.session.commit()
-
-
-
-# class Episode(db.Model):
-#     __tablename__ = "episodes"
-#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-#     iamddb_id = db.Column(db.Integer, db.ForeignKey("media.id"), nullable=False)
-#     title = db.Column(db.String, nullable=False)
-#     description = db.Column(db.String, nullable=True)
-#     tmdb_id = db.Column(db.String, nullable=False)
-#     season_nr = db.Column(db.Integer, nullable=False)
-#     episode_nr = db.Column(db.Integer, nullable=False)
-

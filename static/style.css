@@ -4,4 +4,10 @@
 
 body {
     color: pink;
+    font-family: public pixel;
+}
+
+@fontface {
+    font-family: "public pixel";
+    src: url("public-pixel-font/PublicPixel-z84yD.ttf") format("true type");
 }

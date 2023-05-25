@@ -1,6 +1,8 @@
 {% extends "layout.html" %}
 
 {% block main %}
+<h> Results for:    {{search_value}}</h>
+{{results["total_pages"]}}
 <table>
   <tr>
     <th>total results</th><td>{{ results["total_results"] }}</td>
@@ -9,16 +11,30 @@
   {% for item in results["results"]%}
   <tr>
     <td>
+      <img src="https://image.tmdb.org/t/p/w200{{ item["poster_path"] }}" alt="poster_image"></img>
       <a href="/{{ search_type }}/{{item["id"] }}">
-	<b> {{ item["title"] }}
+	{% if item["original_title"] %}
+	<b>{{ item["original_title"] }}</b>
+	{% endif %}
+	{% if item["original_name"] %}
+	<b>{{ item["original_name"] }}</b>
+	{% endif %}
+	
     </td>
+
+    {% if search_type == "serie" %}
+    <td>{{ item["first_air_date"] }} - {{ item["last_air_date"] }}</td>
+    {% endif %}
+    {% if search_type == "movie" %}
+    <td>{{ item["release_date"] }}</td>
+    {% endif %}
+    {% if item["release_date"] %}
+    <td>{{item["release_date"][:4]}}</td>
+    {% endif %}
+    <td></td>
 
     <td>
-      {% if item["backdrop_path"] %}
-      <img src="https://image.tmdb.org/t/p/w200{{ item["backdrop_path"] }}" alt="poster_image"></img>
-      {% endif %}
     </td>
-
   </tr>
   {% endfor %}
 </table>
@@ -28,14 +44,17 @@
 
     <li class="page-item">
       <form action="/search" method="post">
-	<input type="hidden" id="movies" name="search_type" value="{{ search_type }}">
-	<input type="hidden" id="movies" name="page" value="{{ page }}">
-	<input type="hidden" id="movies" name="search_value" value={{ search_value }}>
 	{% if results["page"] == page %}
+	<input type="hidden" id="movies" name="search_type" value="{{ search_type }}">
+	<input type="hidden" id="movies" name="page_nr" value="{{ page }}">
+	<input type="hidden" id="movies" name="search_value" value="{{ search_value }}">
 	<button class="btn btn-secondary" type="submit" disabled>
 	  {{ page }}
 	</button>
 	{% else %}
+	<input type="hidden" id="movies" name="search_type" value="{{ search_type }}">
+	<input type="hidden" id="movies" name="page_nr" value="{{ page }}">
+	<input type="hidden" id="movies" name="search_value" value="{{ search_value }}">
 	<button class="btn btn-primary" type="submit">
 	  {{ page }}
 	</button>
@@ -44,6 +63,5 @@
     {% endfor %}
     </form>
   </ul>
-
 </nav>
 {% endblock %}

@@ -40,6 +40,25 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
+@app.route("/search", methods=["GET", "POST"])
+def search():
+    if request.method == "GET":
+        return render_template("search.html")
+
+    else:
+        page_nr = request.form.get("page_nr")
+        search_value = request.form.get("search")
+        search_type = request.form.get("search_type")
+        search = Search()
+
+        if search_type == "movies":
+            results = search.search_movies(search_value, page_nr)
+            return render_template("searched.html", results=results, search_type=search_type)
+
+        elif search_type == "series":
+            results = search.search_series(search_value, page_nr)
+            return render_template("searched.html", results=results, search_type=search_type)
+
 
 @app.route("/search", methods=["GET", "POST"])
 def search():
@@ -139,6 +158,7 @@ def movies(tmdb_id):
         user_id = session.get("user_id")
         movie = Movie()
         movie_data = movie.check_and_retrieve_database(tmdb_id)[0]
+
 
         if user_id:
             user = User()
@@ -278,8 +298,6 @@ def episode(tmdb_id, season_nr, episode_nr):
 
     if request.method == "GET":
         return render_template("episode.html ", episode=episode_data, username=username)
-
-    pass
 
 
 @app.route("/register", methods=["GET", "POST"])

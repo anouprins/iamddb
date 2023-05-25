@@ -2,14 +2,75 @@
 
 
 {% block main %}
-<p>
-  <img src="https://image.tmdb.org/t/p/w200{{ serie.poster_path }}" alt="poster_image"></img>
-</p>
-{{ serie.serie_title }}
-<h>{{ serie.title }}</h>
-<p>{{ serie.first_air_date }} - {{ serie.last_air_date }}
-  {% if serie.tagline %}
-<p></p> {{ serie.tagline }}
-{% endif %}
-{{ serie.spoken_languages }}
+
+<table>
+    <tr>
+	<th>{{serie.title}} (serie)</th><td>{{ serie.first_air_date[:4] }} - {{ serie.last_air_date[:4] }}</td>
+    </tr>
+    <tr>
+	<td>
+	    <img src="https://image.tmdb.org/t/p/w200{{ serie.poster_path }}" alt="poster_image"></img></td><p></p>
+	    <tr>
+		<th>Seasons</th><td>{{ serie.seasons_amt }}</td>
+	    </tr>
+	    <tr>
+		<th>Languages</th><td>{{ serie.spoken_languages }}</td>
+	    </tr>
+	    <tr>
+		<th>Storyline</th><td>{{ serie.tagline }}</td><br><br>
+	    </tr>
+	    <tr>{% if season_data.items() %}
+		<th>Keep track of watched episodes</th>
+		<td>
+		    <ul>
+		<form action="/series/{{serie.tmdb_id}}" method="post">
+		    {% for season_nr, episodes_amt in season_data.items() %}
+		    <li>
+			{{ season_nr }}:
+
+			{% for episode in range(1, episodes_amt+1) %}
+
+			{% if watched_episodes != {} %}
+			{% for season, episodes in watched_episodes.items() %}
+
+			{% if episode in episodes %}
+
+			{{episode}} <input type="checkbox" name="episode_{{ season_nr }}.{{ episode }}" checked>
+
+			{% else %}
+
+			{{episode}} <input type="checkbox" name="episode_{{ season_nr }}.{{ episode }}">
+
+			{% endif %}
+
+			{% endfor %}
+
+			{% else %}
+
+			{{episode}} <input type="checkbox" name="episode_{{ season_nr }}.{{ episode }}">
+			
+			{% endif %}
+
+
+			{% endfor %}
+		    </li>
+		    {% endfor %}
+		    <input type="submit" id="watched_episodes" name="submit_value" value="watched episodes">
+		</form>
+		    </ul>
+		</td>
+		{% endif %}
+	    </tr>
+    </tr>
+
+</table>
+
+<form action ="/series/{{serie.tmdb_id}}/", method="post">
+    <input type="submit" id="to_watch" name="list_value" value="add to watchlist">
+    <input type="submit" id="watched" name="list_value" value="watched">
+</form>
+
+
+
+
 {% endblock %}

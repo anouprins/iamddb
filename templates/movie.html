@@ -5,11 +5,14 @@
   <img src="https://image.tmdb.org/t/p/w200{{ movie.poster_path }}" alt="poster_image"></img>
 </p>
 
-<h>{{ movie.title }}</h>
+<h>{{ movie.title }} (movie)</h>
 <p>{{ movie.release_date }}
   {% if movie.tagline %}
 <p></p> {{ movie.tagline }}
 {% endif %}
-{{ movie.spoken_languages }}
-{{movie.poster_path}}
+{{ movie.spoken_languages }}<br>
+<form action ="/movies/{{movie.tmdb_id}}/", method="post">
+  <input type="submit" id="to_watch" name="list_value" value="add to watchlist">
+  <input type="submit" id="watched" name="list_value" value="watched">
+</form>
 {% endblock %}

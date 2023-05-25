@@ -108,21 +108,22 @@ class Serie():
                             seasons_amt=seasons_amt,
                             media_type=media_type)
 
-        for season in details["seasons"]:
-            season_title = season["name"]
-            episodes_amt = season["episode_count"]
-            season_nr = season["season_number"]
-            air_date = season["air_date"]
+        if details["seasons"] != []:
+            for season in details["seasons"]:
+                season_title = season["name"]
+                episodes_amt = season["episode_count"]
+                season_nr = season["season_number"]
+                air_date = season["air_date"]
 
-        season = SeasonDB(tmdb_id=tmdb_id,
-                          title=season_title,
-                          serie_title=serie_title,
-                          episodes_amt=episodes_amt,
-                          season_nr=season_nr,
-                          air_date=air_date,
-                          poster_path=poster_path)
+            season = SeasonDB(tmdb_id=tmdb_id,
+                              title=season_title,
+                              serie_title=serie_title,
+                              episodes_amt=episodes_amt,
+                              season_nr=season_nr,
+                              air_date=air_date,
+                              poster_path=poster_path)
 
-        db.session.add(season)
+            db.session.add(season)
 
         genres = details["genres"]
         # add each genre object
