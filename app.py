@@ -154,14 +154,19 @@ def movies(tmdb_id):
     else:
         list_type = request.form.get("list_value")
         media_type = "movie"
+        watchlist = Watchlist()
 
         if list_type == 'add to watchlist':
-            watchlist = Watchlist()
             watchlist.add_item(tmdb_id, user_id, media_type)
 
-        elif list_type == 'watched':
+        if list_type == 'watched':
             watched = Watched()
             watched.add_item(tmdb_id, user_id, media_type)
+
+            # remove item from watchlist if existent in watchlist
+            if watchlist.connection_exists(tmdb_id, user_id):
+                watchlist.remove_item(tmdb_id, user_id)
+
         return render_template("movie.html", movie=movie_data, username=username)
 
 
@@ -196,37 +201,45 @@ def series(tmdb_id):
         else:
             username = ""
 
+    episodes = Episode()
+
+
     if request.method == "GET":
-        return render_template("serie.html", serie=serie_data, username=username, season_data=season_data)
+        watched_episodes = episodes.lookup_watched_episodes(tmdb_id, user_id)
+        return render_template("serie.html", serie=serie_data, username=username, season_data=season_data, watched_episodes=watched_episodes)
 
     else:
         list_type = request.form.get("list_value")
         media_type = "serie"
         submit_value = request.form.get("submit_value")
-        checked_episodes = [form_value[form_value.index('_') + 1:] for form_value in request.form if form_value.startswith('episode')]
-
-        episodes = Episode()
-        for episode in checked_episodes:
-            # extract season_nr and episode_nr from form values
-            season_nr = episode[:episode.index('.')]
-            episode_nr = episode[episode.index('.')+1:]
-
-            # set episode as watched in database
-            episodes.add_watched(tmdb_id, season_nr, episode_nr, user_id)
+        watchlist = Watchlist()
 
         if list_type == 'add to watchlist':
-            watchlist = Watchlist()
             watchlist.add_item(tmdb_id, user_id, media_type)
 
-        elif list_type == 'watched':
+        if list_type == 'watched':
             watched = Watched()
             watched.add_item(tmdb_id, user_id, media_type)
 
-        elif submit_value == "watched_episodes":
-            breakpoint()
-            episodes = Episode()
+            # remove item from watchlist if existent in watchlist
+            if watchlist.connection_exists(tmdb_id, user_id):
+                watchlist.remove_item(tmdb_id, user_id)
 
-        return render_template("serie.html", serie=serie_data, username=username, season_data=season_data)
+
+        if submit_value == "watched episodes":
+            checked_episodes = [form_value[form_value.index('_') + 1:] for form_value in request.form if form_value.startswith('episode')]
+
+            for episode in checked_episodes:
+                # extract season_nr and episode_nr from form values
+                season_nr = episode[:episode.index('.')]
+                episode_nr = episode[episode.index('.')+1:]
+
+                # set episode as watched in database
+                episodes.add_watched(tmdb_id, season_nr, episode_nr, user_id)
+
+        watched_episodes = episodes.lookup_watched_episodes(tmdb_id, user_id)
+
+        return render_template("serie.html", serie=serie_data, username=username, season_data=season_data, watched_episodes=watched_episodes)
 
 
 @app.route("/series/<tmdb_id>/season/<season_nr>/", methods=["GET", "POST"])
