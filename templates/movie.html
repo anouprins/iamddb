@@ -45,7 +45,7 @@
 <table>
   {% for review in all_reviews %}
   <tr>
-    <th>Reviewed by:  {{ review.username }}</th> <td>  </td><td> on {{ review.datetime.strftime("%d %B %Y, %H:%M ") }}</td>
+    <th>Reviewed by:   {{ review.username }}</th> <td>  </td><td> on {{ review.datetime.strftime("%d %B %Y, %H:%M ") }}</td>
   </tr>
   <tr>
     <th>Review</th><td>{{ review.review_text }}</td>

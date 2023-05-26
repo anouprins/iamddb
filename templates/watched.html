@@ -7,7 +7,7 @@
 <h>Watched</h><br>
 <ol>
   {% for item, key in watched_data.items() %}
-  <li><a href="{{key[0].media_type}}s/{{item }}">
+  <li><a href="{{key[0].media_type}}s/{{ item }}">
 	{{ key[0].title }}</a>
 {% if key[0].air_date %}{{ key[0].air_date }}{% endif %}{% if key[0].first_air_date %}{{ key[0].first_air_date[:4] }} - {{ key[0].last_air_date[:4] }} {% endif %} ({{key[0].media_type}})<table>
   <tr>

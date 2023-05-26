@@ -39,10 +39,9 @@ class Watchlist():
         # connection exists
         return True
 
-    def get_all_items_user(self, user_id: int):
+    def get_all_items_user(self, user_id: int) -> list:
         """ Returns all items in watchlist for user """
-        items = db.session.execute(
-            db.select(WatchlistDB.tmdb_id, WatchlistDB.media_type).where(user_id == user_id))
-        all_items = items.all()
-        return all_items
+        items = db.session.query(WatchlistDB).filter(WatchlistDB.user_id==user_id).all()
+
+        return items
         

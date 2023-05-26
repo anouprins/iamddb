@@ -26,7 +26,7 @@ class Review():
 
     def lookup_review(self, tmdb_id: int, user_id: int):
         """ Returns review from database by given user and for given book """
-        review = ReviewDB.query.filter(ReviewDB.tmdb_id == tmdb_id, ReviewDB.user_id == user_id).all()
+        review = ReviewDB.query.filter(ReviewDB.tmdb_id==tmdb_id, ReviewDB.user_id == user_id).all()
         return review
 
     def review_available(self, tmdb_id: int, user_id: int) -> bool:
@@ -38,5 +38,5 @@ class Review():
 
     def get_all_reviews(self, tmdb_id: int):
         """ Returns all reviews from database in dictionary """
-        reviews = ReviewDB.query.filter(tmdb_id==tmdb_id).all()
+        reviews = ReviewDB.query.filter(ReviewDB.tmdb_id==tmdb_id).order_by(ReviewDB.tmdb_id).all()
         return reviews
