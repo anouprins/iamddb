@@ -40,25 +40,6 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
-@app.route("/search", methods=["GET", "POST"])
-def search():
-    if request.method == "GET":
-        return render_template("search.html")
-
-    else:
-        page_nr = request.form.get("page_nr")
-        search_value = request.form.get("search")
-        search_type = request.form.get("search_type")
-        search = Search()
-
-        if search_type == "movies":
-            results = search.search_movies(search_value, page_nr)
-            return render_template("searched.html", results=results, search_type=search_type)
-
-        elif search_type == "series":
-            results = search.search_series(search_value, page_nr)
-            return render_template("searched.html", results=results, search_type=search_type)
-
 
 @app.route("/search", methods=["GET", "POST"])
 def search():
@@ -190,7 +171,6 @@ def movies(tmdb_id):
         return render_template("movie.html", movie=movie_data, username=username)
 
 
-
 @app.route("/series/<tmdb_id>/", methods=["GET", "POST"])
 @login_required
 def series(tmdb_id):
@@ -223,7 +203,6 @@ def series(tmdb_id):
 
     episodes = Episode()
 
-
     if request.method == "GET":
         watched_episodes = episodes.lookup_watched_episodes(tmdb_id, user_id)
         return render_template("serie.html", serie=serie_data, username=username, season_data=season_data, watched_episodes=watched_episodes)
@@ -244,7 +223,6 @@ def series(tmdb_id):
             # remove item from watchlist if existent in watchlist
             if watchlist.connection_exists(tmdb_id, user_id):
                 watchlist.remove_item(tmdb_id, user_id)
-
 
         if submit_value == "watched episodes":
             checked_episodes = [form_value[form_value.index('_') + 1:] for form_value in request.form if form_value.startswith('episode')]

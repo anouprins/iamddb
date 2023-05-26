@@ -90,7 +90,6 @@ class Director(db.Model):
     person_id = db.Column(db.Integer, db.ForeignKey("people.id"), nullable=False)
 
 
-<<<<<<< HEAD
 class Watchlist(db.Model):
     __tablename__ = "to_watch"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -104,20 +103,6 @@ class Watched(db.Model):
     tmdb_id = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, nullable=False)
     media_type = db.Column(db.String, nullable=False)
-=======
-# class ToWatch(db.Model):
-#     __tablename__ = "to_watch"
-#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-#     tmdb_id = db.Column(db.String, nullable=False)
-
-
-# class Watched(db.Model):
-#     __tablename__ = "to_watch"
-#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-#     tmdb_id = db.Column(db.String, nullable=False)
-
->>>>>>> 4ad179d3718279271b564262d0b00e49f4f70cef
-
 # class List(db.Model):
 #     __tablename__ = "lists"
 #     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

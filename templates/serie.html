@@ -2,7 +2,6 @@
 
 
 {% block main %}
-
 <table>
     <tr>
 	<th>{{serie.title}} (serie)</th><td>{{ serie.first_air_date[:4] }} - {{ serie.last_air_date[:4] }}</td>
@@ -31,9 +30,8 @@
 			{% for episode in range(1, episodes_amt+1) %}
 
 			{% if watched_episodes != {} %}
-			{% for season, episodes in watched_episodes.items() %}
 
-			{% if episode in episodes %}
+			{% if episode in watched_episodes[season_nr] %}
 
 			{{episode}} <input type="checkbox" name="episode_{{ season_nr }}.{{ episode }}" checked>
 
@@ -43,7 +41,6 @@
 
 			{% endif %}
 
-			{% endfor %}
 
 			{% else %}
 
