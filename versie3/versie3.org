@@ -1,0 +1,18 @@
+
+*   Wat was het lastigste om uit te vinden of te maken?
+  Omdat ik films en serie data in mijn eigen database wilde opslaan zodat er niet telkens requests aan de tmdb database gedaan worden voor elke scheet, heb ik veel tijd genomen voor iets dat je in de website niet per se terugziet.
+  *   Waar en waarom ben je afgeweken van het oorspronkelijke ontwerp?
+  Ik heb ervoor gekozen om mijn website niet modern te maken. Ik wil dat het eruit ziet als een oude game/een lijst die je op papier opschrijft. Dit komt goed uit want is ook makkelijker te maken. Het geeft me de mogelijkheid om zo veel mogelijk aan functionaliteiten te werken.
+*   Zou je nog een maand de tijd hebben, wat zou je willen veranderen, toevoegen of anders doen?
+Als ik nog een maand zou hebben, zou ik de taste pagina uitgebreider maken. Ik zou verschillende scores kunnen geven, en zou niet alleen loopen door de watchlist, maar misschien ook een functionaliteit dat je kan kiezen welke lijst hij score van pakt.
+*   Met nog maar een paar dagen te gaan, waar ga je op focussen?
+1. De code op schonen, comments en docstrings toevoegen, onnodige code weghalen
+2. Zorgen dat mensen persoonlijke lijsten kunnen maken, en als het lukt met tijd die kunnen delen met andere accounts
+3. Zorgen dat je ook episodes ook als ongekeken kunt maken door checkboxes te ontvinken in de serie pagina
+4. Zorgen dat de buttons "add to watchlist" en "watched" , "remove from watchlist" en "unwatch" worden als de film/serie al in de lijsten zitten (incl de database functies hierbij)
+5. Pagination moet werken in searched pagina
+6. Zorgen dat de website er goed uit ziet, dus html paginas werken
+7. Als het me lukt, zorgen dat taste niet alleen je gemiddelde score haalt uit watchlist, maar uit al je lijsten
+
+
+
