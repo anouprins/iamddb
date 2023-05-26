@@ -5,6 +5,9 @@
 <table>
     <tr>
 	<th>{{serie.title}} (serie)</th><td>{{ serie.first_air_date[:4] }} - {{ serie.last_air_date[:4] }}</td>
+	{% if last_episode %}
+	<th>Last watched episode:</th><td>Season {{ last_episode["season"] }}, Episode {{ last_episode["episode"] }}</td>
+	{% endif %}
     </tr>
     <tr>
 	<td>

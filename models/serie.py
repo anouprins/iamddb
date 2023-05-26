@@ -70,7 +70,11 @@ class Serie():
         details = self.lookup_serie_tmdb(tmdb_id)
 
         serie_title = details["name"]
-        spoken_languages = details["spoken_languages"][0]["english_name"]
+        try:
+            spoken_languages = details["spoken_languages"][0]["english_name"]
+        except Exception:
+            spoken_languages = ""
+
         poster_path = details["poster_path"]
         first_air_date = details["first_air_date"]
         last_air_date = details["last_air_date"]

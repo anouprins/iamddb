@@ -91,7 +91,15 @@ def watchlist():
                 watchlist_data[movie[0].tmdb_id] = movie
 
             elif item[1] == "serie":
+                # extract serie data
                 serie = series.check_and_retrieve_database(item[0])
+
+                # extract data for last episode watched
+                episodes = Episode()
+                last_episode = episodes.lookup_last_watched(serie[0].tmdb_id, user_id)
+                serie.append(last_episode)
+
+                # add serie data to dictionary
                 watchlist_data[serie[0].tmdb_id] = serie
 
     if request.method == "GET":
@@ -122,13 +130,19 @@ def watched():
                 watched_data[movie[0].tmdb_id] = movie
 
             elif item.media_type == "serie":
+                # extract data for serie
                 serie = series.check_and_retrieve_database(item.tmdb_id)
-                watched_data[serie[0].tmdb_id] = serie
 
+                # extract data for last episode watched
+                episodes = Episode()
+                last_episode = episodes.lookup_last_watched(serie[0].tmdb_id, user_id)
+                serie.append(last_episode)
+
+                # add serie data to dictionary
+                watched_data[serie[0].tmdb_id] = serie
 
     if request.method == "GET":
         return render_template("watched.html", watched_data=watched_data, username=username)
-
 
 
 @app.route("/movies/<tmdb_id>/", methods=["GET", "POST"])
@@ -205,7 +219,8 @@ def series(tmdb_id):
 
     if request.method == "GET":
         watched_episodes = episodes.lookup_watched_episodes(tmdb_id, user_id)
-        return render_template("serie.html", serie=serie_data, username=username, season_data=season_data, watched_episodes=watched_episodes)
+        last_episode = episodes.lookup_last_watched(tmdb_id, user_id)
+        return render_template("serie.html", serie=serie_data, username=username, season_data=season_data, watched_episodes=watched_episodes, last_episode=last_episode)
 
     else:
         list_type = request.form.get("list_value")
@@ -236,8 +251,8 @@ def series(tmdb_id):
                 episodes.add_watched(tmdb_id, season_nr, episode_nr, user_id)
 
         watched_episodes = episodes.lookup_watched_episodes(tmdb_id, user_id)
-
-        return render_template("serie.html", serie=serie_data, username=username, season_data=season_data, watched_episodes=watched_episodes)
+        last_episode = episodes.lookup_last_watched(tmdb_id, user_id)
+        return render_template("serie.html", serie=serie_data, username=username, season_data=season_data, watched_episodes=watched_episodes, last_episode=last_episode)
 
 
 @app.route("/series/<tmdb_id>/season/<season_nr>/", methods=["GET", "POST"])

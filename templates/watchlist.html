@@ -16,6 +16,9 @@
       <img src="https://image.tmdb.org/t/p/w200{{ key[0].poster_path }}" alt="poster_image"></img>
       {% endif %}
     </td>
+        {% if key[1] %}
+    <th>Last watched episode:</th><td>Season {{ key[1]["season"] }}, Episode {{ key[1]["episode"] }}</td>
+    {% endif %}
   </tr>
   </table>
   </li>

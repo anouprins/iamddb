@@ -22,7 +22,7 @@ class Episode():
         # if episode exists and is watched, do nothing
         return True
 
-    def lookup_watched_episodes(self, tmdb_id: str, user_id: int) -> list:
+    def lookup_watched_episodes(self, tmdb_id: str, user_id: int) -> dict:
         """ Returns dict of all episodes for user and tmdb item that are set as watched """
         # find all episodes with from serie watched by user
         episodes = EpisodeDB.query.filter(EpisodeDB.tmdb_id==tmdb_id,
@@ -33,21 +33,26 @@ class Episode():
 
         return episode_data
 
-    def translate_to_dict(self, episodes: list) -> dict:
-        """
-        Returns a dictionary of all episodes from episodes list.
-        Keys in dictionary is season nr
-        Value in dictionary is a list of all episodes for that season
-        """
-        episode_data = []
+    def lookup_last_watched(self, tmdb_id: str, user_id: int) -> Union[None, int]:
+        """ Returns dictionary of last watched episode for serie """
+        # get all watched episodes for user and serie
+        watched_episodes = self.lookup_watched_episodes(tmdb_id, user_id)
 
-        # iterate over each episode object from episode list
-        for episode in episodes:
-            season_nr = episode.season_nr
-            episode_nr = episode.episode_nr
+        # return None if no episodes watched
+        if watched_episodes == {}:
+            return None
 
-            # add episode to episode data list
-            episode_data = self.add_episode_list(episode_data, season_nr, episode_nr)
+        # extract last season
+        ordered_seasons = dict(sorted(watched_episodes.items()))
+        last_season = list(ordered_seasons.keys())[-1]
+
+        # extract last episode from season
+        episodes = watched_episodes[last_season]
+        sorted_episodes = sorted(episodes)
+        last_episode = sorted_episodes[-1]
+
+        # return into dict
+        episode_data = {"season": last_season, "episode": last_episode, "tmdb_id": tmdb_id}
 
         return episode_data
 
@@ -82,38 +87,6 @@ class Episode():
 
         # if no episode is in list, create new dictionary item
         episode_data[season_nr] = [episode_nr]
-        return episode_data
-
-    def add_episode_list(self, episode_data: list, season_nr: int, episode_nr: int) -> list:
-        """ Adds episode to episode data list """
-        # create new dictionary for season if not yet existent
-
-        # iterate over each season dict in episode_data list
-        for item in episode_data:
-
-            # check if season dictionary already exists
-            if season_nr in item:
-                # if episode already in there, don't add it again
-                if episode_nr in item[season_nr]:
-                    return episode_data
-
-                # append episode to episode list
-                episode_list = item[season_nr]
-                episode_list.append(episode_nr)
-
-                # remove old season dict
-                item.clear()
-
-                # add new season dict
-                item[season_nr] = episode_list
-
-                return episode_data
-
-        # create new season dict if not yet existent
-        season_dict = {season_nr: [episode_nr]}
-
-        # add it to episode_data list
-        episode_data.append(season_dict)
         return episode_data
 
     def set_watched(self, tmdb_id: str, season_nr: int, episode_nr: int, user_id: int) -> None:
