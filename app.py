@@ -15,6 +15,7 @@ from .models.seasons import Season
 from .models.search import Search
 from .models.to_watch import Watchlist
 from .models.watched import Watched
+from .models.reviews import Review
 
 app = Flask(__name__)
 
@@ -154,6 +155,8 @@ def movies(tmdb_id):
         movie = Movie()
         movie_data = movie.check_and_retrieve_database(tmdb_id)[0]
 
+        reviews = Review()
+        all_reviews = reviews.get_all_reviews(tmdb_id)
 
         if user_id:
             user = User()
@@ -162,9 +165,8 @@ def movies(tmdb_id):
         else:
             username = ""
 
-
     if request.method == "GET":
-        return render_template("movie.html", movie=movie_data, username=username)
+        return render_template("movie.html", movie=movie_data, username=username, all_reviews=all_reviews)
 
     else:
         list_type = request.form.get("list_value")
@@ -182,7 +184,28 @@ def movies(tmdb_id):
             if watchlist.connection_exists(tmdb_id, user_id):
                 watchlist.remove_item(tmdb_id, user_id)
 
-        return render_template("movie.html", movie=movie_data, username=username)
+        if request.form.get("review"):
+            review = request.form.get("review")
+            rating = request.form.get("rating")
+
+            # ensure a filled in review
+            if not request.form.get("review"):
+                return render_template("book.html", book_data=book_data, description=description, all_reviews=all_reviews, error="empty_form")
+
+            # ensure a filled in rating
+            if not request.form.get("rating"):
+                return render_template("book.html", book_data=book_data, description=description, all_reviews=all_reviews, error="empty_form")
+
+            # add review
+            reviews = Review()
+            add_review = reviews.add_review(tmdb_id, user_id, rating, review)
+            all_reviews = reviews.get_all_reviews(tmdb_id)
+
+            # only add one review per person
+            if not add_review:
+                return render_template("book.html", book_data=book_data, description=description, all_reviews=all_reviews, error="review_unavailable")
+
+        return render_template("movie.html", movie=movie_data, username=username, all_reviews=all_reviews)
 
 
 @app.route("/series/<tmdb_id>/", methods=["GET", "POST"])

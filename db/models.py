@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+import datetime
 
 db = SQLAlchemy()
 
@@ -110,3 +111,12 @@ class Watched(db.Model):
 #     title = db.Column(db.String, nullable=False)
 #     add_date = db.Column(db.DateTime, nullable=False)
 
+class Review(db.Model):
+    __tablename__ = "reviews"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    tmdb_id = db.Column(db.String, nullable=False)
+    username = db.Column(db.String, nullable=False)
+    review_text = db.Column(db.String, nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
+    datetime = db.Column(db.DateTime, default=datetime.datetime.now, nullable=False)
