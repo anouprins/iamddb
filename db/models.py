@@ -1,6 +1,8 @@
 from flask_sqlalchemy import SQLAlchemy
 import datetime
 
+from .users import User
+
 db = SQLAlchemy()
 
 
@@ -104,12 +106,21 @@ class Watched(db.Model):
     tmdb_id = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, nullable=False)
     media_type = db.Column(db.String, nullable=False)
-# class List(db.Model):
-#     __tablename__ = "lists"
-#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-#     tmdb_id = db.Column(db.String, nullable=False)
-#     title = db.Column(db.String, nullable=False)
-#     add_date = db.Column(db.DateTime, nullable=False)
+
+class List(db.Model):
+    __tablename__ = "lists"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    tmdb_id = db.Column(db.String, nullable=False)
+    title = db.Column(db.String, nullable=False)
+    datetime = db.Column(db.DateTime, default=datetime.datetime.now, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    media_type = db.Column(db.String, nullable=False)
+
+class ListUser(db.Model):
+    __tablename__ = "list_users"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    list_id = db.Column(db.Integer, db.ForeignKey("lists.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
 
 class Review(db.Model):
     __tablename__ = "reviews"

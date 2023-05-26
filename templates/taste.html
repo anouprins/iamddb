@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block main %}
+
+Is your taste really that tasty?
+Based on the popularity scores from the tmdb database and your watchlist, we have discovered how popular your taste is.<br>
+<form action ="/taste", method="post">
+  <input type="submit" id="" name="get_score" value="Get Score">
+</form>
+{% if score %}
+{{score}}
+{% endif %}
+
+
+
+{% endblock %}
