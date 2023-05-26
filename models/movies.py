@@ -57,8 +57,12 @@ class Movie():
         """ Adds all relevant details from serie to iamddb database """
         details = self.lookup_movie_tmdb(tmdb_id)
 
+        try:
+            spoken_languages = details["spoken_languages"][0]["english_name"]
+        except Exception:
+            spoken_languages = ""
+
         title = details["title"]
-        spoken_languages = details["spoken_languages"][0]["english_name"]
         poster_path = details["poster_path"]
         release_date = details["release_date"]
         tagline = details["tagline"]
