@@ -100,6 +100,7 @@ class Watchlist(db.Model):
     user_id = db.Column(db.Integer, nullable=False)
     media_type = db.Column(db.String, nullable=False)
 
+
 class Watched(db.Model):
     __tablename__ = "watched"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -107,20 +108,31 @@ class Watched(db.Model):
     user_id = db.Column(db.Integer, nullable=False)
     media_type = db.Column(db.String, nullable=False)
 
+
 class List(db.Model):
     __tablename__ = "lists"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    title = db.Column(db.String, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+
+
+class ListItem(db.Model):
+    __tablename__ = "list_items"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    list_id = db.Column(db.Integer, db.ForeignKey("lists.id"), nullable=False)
     tmdb_id = db.Column(db.String, nullable=False)
     title = db.Column(db.String, nullable=False)
     datetime = db.Column(db.DateTime, default=datetime.datetime.now, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     media_type = db.Column(db.String, nullable=False)
 
+
 class ListUser(db.Model):
     __tablename__ = "list_users"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     list_id = db.Column(db.Integer, db.ForeignKey("lists.id"), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+
 
 class Review(db.Model):
     __tablename__ = "reviews"

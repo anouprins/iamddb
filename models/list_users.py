@@ -31,3 +31,9 @@ class ListUser():
             return False
 
         return True
+
+    def get_all_list_titles(self, user_id: int):
+        """ Returns all list titles connected to user in a list """
+        items = db.session.query(ListUserDB).filter(ListDB.user_id==user_id).all()
+        return items
+        

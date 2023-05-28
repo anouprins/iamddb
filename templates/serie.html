@@ -68,6 +68,14 @@
 <form action ="/series/{{serie.tmdb_id}}/", method="post">
     <input type="submit" id="to_watch" name="list_value" value="add to watchlist">
     <input type="submit" id="watched" name="list_value" value="watched">
+    <select id="list_title" name="list_title" class="form-select" aria-label="Default select example">
+	<option selected>Add to personal list</option>
+	{% for item in list_items %}
+	<option value="{{ item.title }}">{{item.title}}</option>
+	{% endfor %}
+	<option value="new_list">New list</option>
+    </select>
+    <button class="btn btn-primary" type="submit" name="list_value" id="list" value="list">Add to list</button>
 </form>
 
 <form action="/series/{{ serie.tmdb_id }}" method="post">
