@@ -33,4 +33,3 @@ class List():
         """ Returns all tmdb items for user """
         items = db.session.query(ListDB).filter(ListDB.user_id==user_id).all()
         return items
-
