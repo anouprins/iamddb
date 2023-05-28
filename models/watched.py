@@ -5,7 +5,7 @@ from ..db.models import db
 from ..db.models import Watched as WatchedDB
 
 class Watched():
-    def add_item(self, tmdb_id: str, user_id: int, media_type: str) -> None:
+    def update_item(self, tmdb_id: str, user_id: int, media_type: str) -> None:
         """ Stores tmdb item with user id in 'to_watch' list in database if not already existent """
         # only add item if not already in database
         if not self.connection_exists(tmdb_id, user_id):
@@ -15,6 +15,9 @@ class Watched():
             # add object to database
             db.session.add(item)
             db.session.commit()
+
+        else:
+            self.remove_item(tmdb_id, user_id)
 
     def remove_item(self, tmdb_id: str, user_id: int) -> None:
         """ Removes tmdb and user connection from database """

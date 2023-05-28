@@ -4,6 +4,8 @@ from typing import Union
 
 from ..db.models import db
 from ..db.models import Serie as SerieDB, Genre as GenreDB, Episode as EpisodeDB, People as PeopleDB, Actors as ActorsDB, Director as DirectorDB, Season as SeasonDB
+from .watched import Watched
+from .to_watch import Watchlist
 
 class Serie():
     def lookup_serie_tmdb(self, tmdb_id: str) -> Union[dict, None]:
@@ -139,14 +141,16 @@ class Serie():
         db.session.commit()
 
 
+    def in_list(self, list_title: str, user_id: int, tmdb_id: str) -> bool:
+        """ Returns True if movie in list object, False otherwise """
+        if list_title == "watchlist":
+            list_obj = Watchlist()
+            return list_obj.connection_exists(tmdb_id, user_id)
 
-# class Episode(db.Model):
-#     __tablename__ = "episodes"
-#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-#     iamddb_id = db.Column(db.Integer, db.ForeignKey("media.id"), nullable=False)
-#     title = db.Column(db.String, nullable=False)
-#     description = db.Column(db.String, nullable=True)
-#     tmdb_id = db.Column(db.String, nullable=False)
-#     season_nr = db.Column(db.Integer, nullable=False)
-#     episode_nr = db.Column(db.Integer, nullable=False)
+        elif list_title == "watched":
+            list_obj = Watched()
+            return list_obj.connection_exists(tmdb_id, user_id)
 
+        else:
+            list_obj = List()
+            return list_obj.item_exists(tmdb_id, user_id, list_title)

@@ -26,6 +26,7 @@ class Movie(db.Model):
     tagline = db.Column(db.String, nullable=True)
     video_key = db.Column(db.String, nullable=True)
     video_site = db.Column(db.String, nullable=True)
+    watched = db.Column(db.Boolean, default=False, nullable=False)    
 
 
 class Serie(db.Model):
@@ -42,6 +43,7 @@ class Serie(db.Model):
     video_key = db.Column(db.String, nullable=True)
     video_site = db.Column(db.String, nullable=True)
     seasons_amt = db.Column(db.Integer, nullable=False)
+    watched = db.Column(db.Boolean, default=False, nullable=False)
 
 
 class Season(db.Model):

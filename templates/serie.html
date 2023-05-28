@@ -66,8 +66,16 @@
 </table>
 
 <form action ="/series/{{serie.tmdb_id}}/", method="post">
+    {% if in_watchlist %}
+    <input type="submit" id="to_watch" name="list_value" value="remove from watchlist">
+    {% else %}
     <input type="submit" id="to_watch" name="list_value" value="add to watchlist">
+    {% endif %}
+    {% if in_watched %}
+    <input type="submit" id="watched" name="list_value" value="unwatched">
+    {% else %}
     <input type="submit" id="watched" name="list_value" value="watched">
+    {% endif %}
     <select id="list_title" name="list_title" class="form-select" aria-label="Default select example">
 	<option selected>Add to personal list</option>
 	{% for item in list_items %}

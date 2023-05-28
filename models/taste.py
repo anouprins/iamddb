@@ -12,6 +12,10 @@ class Taste():
         # get all items watchlist
         items = self.get_all_tmdb_watchlist(user_id)
 
+        # if watchlist is empty, the score is 0
+        if items == []:
+            return 0
+
         return self.calculate_score(items)
 
     def get_all_tmdb_watchlist(self, user_id: int) -> list:

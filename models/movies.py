@@ -4,6 +4,9 @@ from typing import Union
 
 from ..db.models import db
 from ..db.models import Movie as MovieDB, Genre as GenreDB, People as PeopleDB, Actors as ActorsDB, Director as DirectorDB
+from .to_watch import Watchlist
+from .watched import Watched
+from .lists import List
 
 """ Functions to get movie data from tmbd Api database"""
 
@@ -52,6 +55,20 @@ class Movie():
             return False
 
         return True
+
+    def in_list(self, list_title: str, user_id: int, tmdb_id: str) -> bool:
+        """ Returns True if movie in list object, False otherwise """
+        if list_title == "watchlist":
+            list_obj = Watchlist()
+            return list_obj.connection_exists(tmdb_id, user_id)
+
+        elif list_title == "watched":
+            list_obj = Watched()
+            return list_obj.connection_exists(tmdb_id, user_id)
+
+        else:
+            list_obj = List()
+            return list_obj.item_exists(tmdb_id, user_id, list_title)
 
     def add_database_iamddb(self, tmdb_id: str) -> bool:
         """ Adds all relevant details from serie to iamddb database """

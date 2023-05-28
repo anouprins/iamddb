@@ -6,12 +6,15 @@ from ..db.models import Watchlist as WatchlistDB
 
 
 class Watchlist():
-    def add_item(self, tmdb_id: str, user_id: int, media_type: str) -> None:
+    def update_item(self, tmdb_id: str, user_id: int, media_type: str) -> None:
         """ Stores tmdb item with user id in 'to_watch' list in database """
         if not self.connection_exists(tmdb_id, user_id):
             item = WatchlistDB(tmdb_id=tmdb_id, user_id=user_id, media_type=media_type)
             db.session.add(item)
             db.session.commit()
+
+        else:
+            self.remove_item(tmdb_id, user_id)
 
     def remove_item(self, tmdb_id: str, user_id: int) -> None:
         """ Removes tmdb and user connection from database """

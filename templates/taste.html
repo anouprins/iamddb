@@ -6,10 +6,9 @@ Based on the popularity scores from the tmdb database and your watchlist, we hav
 <form action ="/taste", method="post">
   <input type="submit" id="" name="get_score" value="Get Score">
 </form>
-{% if score %}
+{% if score == 0 %}
+In order to get your score, you must add items to your watchlist!
+{% else %}
 {{score}}
 {% endif %}
-
-
-
 {% endblock %}
