@@ -387,7 +387,7 @@ def series(tmdb_id):
             if list_title == "Add to personal list":
                 return render_template("serie.html", serie=serie_data, season_data=season_data, username=username, all_reviews=all_reviews, watched_episodes=watched_episodes, last_episode=last_episode, list_items=list_items, in_watched=in_watched, in_watchlist=in_watchlist)
 
-                        # create new list
+            # create new list
             elif list_title == "new_list":
                 return redirect("/create_list")
 
@@ -395,7 +395,6 @@ def series(tmdb_id):
                 # add movie to existing list
                 list_item = ListItem()
                 list_item.add_item(list_title, tmdb_id, user_id, media_type)
-
 
         # add reviews
         if request.form.get("review"):

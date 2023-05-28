@@ -22,6 +22,34 @@ class Episode():
         # if episode exists and is watched, do nothing
         return True
 
+    def exists(self, tmdb_id: str, season_nr: int, episode_nr: int, user_id: int) -> None:
+        """ Returns True if episode object exists """
+        item = EpisodeDB.query.filter(EpisodeDB.tmdb_id==tmdb_id,
+                                      EpisodeDB.season_nr==season_nr,
+                                      EpisodeDB.episode_nr==episode_nr,
+                                      EpisodeDB.user_id==user_id).all()
+
+        if item == []:
+            return False
+
+        return True
+
+    def set_unwatched(self, tmdb_id: str, season_nr: int, episode_nr: int, user_id: int) -> None:
+        """ Removes watched episode from database """
+        # only remove connection if connection exists
+        if self.exists(tmdb_id, season_nr, episode_nr, user_id):
+            # query all items from database with matching user_id and tmdb_id
+            items = db.session.query(EpisodeDB).filter(
+                EpisodeDB.user_id==user_id,
+                EpisodeDB.tmdb_id==tmdb_id,
+                EpisodeDB.season_nr==season_nr,
+                EpisodeDB.episode_nr==episode_nr).all()
+
+            # remove each item with matching connection
+            for item in items:
+                db.session.delete(item)
+            db.session.commit()
+
     def lookup_watched_episodes(self, tmdb_id: str, user_id: int) -> dict:
         """ Returns dict of all episodes for user and tmdb item that are set as watched """
         # find all episodes with from serie watched by user
@@ -108,14 +136,3 @@ class Episode():
     def is_watched(self, tmdb_id: str, season_nr: int, episode_nr: int, user_id: int) -> None:
         pass
 
-    def exists(self, tmdb_id: str, season_nr: int, episode_nr: int, user_id: int) -> None:
-        """ Returns True if episode object exists """
-        item = EpisodeDB.query.filter(EpisodeDB.tmdb_id==tmdb_id,
-                                      EpisodeDB.season_nr==season_nr,
-                                      EpisodeDB.episode_nr==episode_nr,
-                                      EpisodeDB.user_id==user_id).all()
-
-        if item == []:
-            return False
-
-        return True
