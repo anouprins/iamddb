@@ -87,24 +87,18 @@ def search():
     # extract all personal list data
     list_item = List()
     list_items = list_item.get_all_items(user_id)
-
     if request.method == "GET":
         return render_template("search.html", username=username, list_items=list_items)
 
     else:
         page_nr = request.form.get("page_nr")
+        print("PAGE NUMBER", page_nr, request.form)
         search_value = request.form.get("search_value")
         search_type = request.form.get("search_type")
         search = Search()
-
-        if search_type == "movies":
-            results = search.search_movies(search_value, page_nr)
-            return render_template("searched.html", results=results, search_type=search_type, search_value=search_value, username=username, list_items=list_items)
-
-        elif search_type == "series":
-            results = search.search_series(search_value, page_nr)
-            return render_template("searched.html", results=results, search_type=search_type, search_value=search_value, username=username, list_items=list_items)
-
+        results = search.search_movies(search_value, page_nr)
+        if search_type == "movies" or search_type == "series":
+            return render_template("searched.html", results=results, search_type=search_type, search_value=search_value, username=username, page_nr=page_nr)
         else:
             return render_template("search.html", username=username, list_items=list_items)
 
@@ -370,17 +364,6 @@ def series(tmdb_id):
             checked_episodes = [form_value[form_value.index('_') + 1:] for form_value in request.form if form_value.startswith('episode')]
 
             episodes.evaluate_checked_episodes(tmdb_id, user_id, checked_episodes)
-            # for episode in checked_episodes:
-            #     # extract season_nr and episode_nr from form values
-            #     season_nr = episode[:episode.index('.')]
-            #     episode_nr = episode[episode.index('.')+1:]
-
-            #     # set episode as watched in database
-            #     episodes.add_watched(tmdb_id, season_nr, episode_nr, user_id)
-            
-
-
-            # delete the episodes that were unchecked
 
             watched_episodes = episodes.lookup_watched_episodes(tmdb_id, user_id)
             last_episode = episodes.lookup_last_watched(tmdb_id, user_id)

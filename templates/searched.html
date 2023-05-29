@@ -6,7 +6,7 @@
 <table>
   <tr>
     <th>total results</th><td>{{ results["total_results"] }}</td>
-    <th>page</th><td>{{ results["page"] }}</td>
+    <th>page</th><td>{{ page_nr }}</td>
   </tr>
   {% for item in results["results"]%}
   <tr>
@@ -39,29 +39,72 @@
   {% endfor %}
 </table>
 <nav aria-label="page navigation">
-  <ul class="pagination">
-    {% for page in range(results["total_pages"]) %}
-
-    <li class="page-item">
-      <form action="/search" method="post">
-	{% if results["page"] == page %}
-	<input type="hidden" id="movies" name="search_type" value="{{ search_type }}">
-	<input type="hidden" id="movies" name="page_nr" value="{{ page }}">
-	<input type="hidden" id="movies" name="search_value" value="{{ search_value }}">
-	<button class="btn btn-secondary" type="submit" disabled>
-	  {{ page }}
-	</button>
-	{% else %}
-	<input type="hidden" id="movies" name="search_type" value="{{ search_type }}">
-	<input type="hidden" id="movies" name="page_nr" value="{{ page }}">
-	<input type="hidden" id="movies" name="search_value" value="{{ search_value }}">
-	<button class="btn btn-primary" type="submit">
-	  {{ page }}
-	</button>
+    <ul class="pagination">
+	{% if results["page"] -1 > 0 %}
+	<li class="page-item">
+	    <form action="/search" method="post">
+		<input type="hidden" id="movies" name="search_type" value="{{ search_type }}">
+		<input type="hidden" id="movies" name="page_nr" value="{{ results["page"] -1 }}">
+		<input type="hidden" id="movies" name="search_value" value="{{ search_value }}">
+		<button class="btn btn-primary" type="submit">
+		    previous
+		</button>
+	    </form>
+	</li>      
 	{% endif %}
-    </li>
-    {% endfor %}
-    </form>
+
+	{% for page in range(results["total_pages"])[1:] %}
+	{% if page < results["page"] and page > results["page"] - 3 %}
+	<li class="page-item">
+	    <form action="/search" method="post">
+		<input type="hidden" id="search_type" name="search_type" value="{{ search_type }}">
+		<input type="hidden" id="page_nr" name="page_nr" value="{{ page }}">
+		<input type="hidden" id="sarch_value" name="search_value" value="{{ search_value }}">
+		<button class="btn btn-primary" type="submit">
+		    {{ page }}
+		</button>
+	    </form>
+	</li>
+	{% endif %}
+	{% if page == results["page"] %}
+      <li class="page-item">
+	  <form action="/search" method="post">
+	      <input type="hidden" id="movies" name="search_type" value="{{ search_type }}">
+	      <input type="hidden" id="movies" name="page_nr" value="{{ page }}">
+	      <input type="hidden" id="movies" name="search_value" value="{{ search_value }}">
+	      <button class="btn btn-secondary" type="submit" disabled>
+		  {{ page }}
+	      </button>
+	  </form>
+      </li>
+      {% endif %}
+      {% if page > results["page"] and page < results["page"] + 3 %}
+      <li class="page-item">
+	  <form action="/search" method="post">
+	      <input type="hidden" id="search_type" name="search_type" value="{{ search_type }}">
+	      <input type="hidden" id="page_nr" name="page_nr" value="{{ page }}">
+	      <input type="hidden" id="sarch_value" name="search_value" value="{{ search_value }}">
+	      <button class="btn btn-primary" type="submit">
+		  {{ page }}
+	      </button>
+	  </form>
+      </li>
+      {% endif %}
+      {% endfor %}
+      {% if results["page"] +1 <= results["total_pages"] %}
+      <li class="page-item">
+	  <form action="/search" method="post">
+	      <input type="hidden" id="movies" name="search_type" value="{{ search_type }}">
+	      <input type="hidden" id="movies" name="page_nr" value="{{ results["page"] +1 }}">
+	      <input type="hidden" id="movies" name="search_value" value="{{ search_value }}">
+	      <button class="btn btn-primary" type="submit">
+		  next
+	      </button>
+	  </form>
+      </li>      
+      {% endif %}      
+
+
   </ul>
 </nav>
 {% endblock %}
