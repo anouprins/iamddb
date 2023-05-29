@@ -1,75 +1,97 @@
 {% extends "layout.html" %}
 
 {% block main %}
+
 <p>
-  <img src="https://image.tmdb.org/t/p/w200{{ movie.poster_path }}" alt="poster_image"></img>
+    <img src="https://image.tmdb.org/t/p/w200{{ movie.poster_path }}" alt="No poster provided."></img>
 </p>
 
-<h>{{ movie.title }} (movie)</h>
-<p>{{ movie.release_date }}
-  {% if movie.tagline %}
-<p></p> {{ movie.tagline }}
-{% endif %}
-{{ movie.spoken_languages }}<br>
+<div class="fs-2 pink">
+    {{ movie.title }} (movie)
+</div><br>
+<div class="pink">
+    {{ movie.release_date }}
+</div><br><br>
+<table>
+    <tr>
+	<th>Languages ------</th>
+	<td>  {{ movie.spoken_languages }}</td>
+    </tr>
+    <tr>
+	<th>Storyline ------</th>
+	<td>  {{ movie.tagline }}</td>
+    </tr>
+</table>
+<br><br>
 <form action ="/movies/{{movie.tmdb_id}}/", method="post">
-  {% if in_watchlist %}
-  <input type="submit" id="to_watch" name="list_value" value="remove from watchlist">
-  {% else %}
-  <input type="submit" id="to_watch" name="list_value" value="add to watchlist">
-  {% endif %}
-  {% if in_watched %}
-  <input type="submit" id="watched" name="list_value" value="unwatched">
-  {% else %}
-  <input type="submit" id="watched" name="list_value" value="watched">
-  {% endif %}
-  <select id="list_title" name="list_title" class="form-select" aria-label="Default select example">
-    <option selected>Add to personal list</option>
-    {% for item in list_items %}
-    <option value="{{ item.title }}">{{item.title}}</option>
-    {% endfor %}
-    <option value="new_list">New list</option>
-  </select>
-  <button class="btn btn-primary" type="submit" name="list_value" id="list" value="list">Add to list</button>
+    {% if in_watchlist %}
+    <input type="submit" class="btn btn-info" id="to_watch" name="list_value" value="remove from watchlist">
+    {% else %}
+    <input type="submit" class="btn btn-primary" id="to_watch" name="list_value" value="add to watchlist">
+    {% endif %}
+    {% if in_watched %}
+    <input type="submit" id="watched" class="btn btn-info" name="list_value" value="unwatched">
+    {% else %}
+    <input type="submit" id="watched" class="btn btn-primary" name="list_value" value="watched">
+    {% endif %}
+    <br><br><br>
 </form>
 
+<form action ="/movies/{{movie.tmdb_id}}/", method="post">
+    <div class="select_bar">
+    <select id="list_title" name="list_title" class="form-select" aria-label="Default select example" >
+	<option selected>Add to personal list</option>
+	{% for item in list_items %}
+	<option value="{{ item.title }}">{{item.title}}</option>
+	{% endfor %}
+	<option value="new_list">New list</option>
+    </select>
+    </div>
+    <button class="btn btn-primary" type="submit" name="list_value" id="list" value="list">Add to list</button>
+</form>
+<br><br><br>
 <form action="/movies/{{ movie.tmdb_id }}" method="post">
-  <table>
-    <tr>
-      <th>  <label for="rating">Rate this Movie</label></th>
-	<td>
-	  <div class="mb-3">
-	    <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="review" name="review" placeholder="Review" type="text">
-	  </div>
-	</td>
-	<td>
-	  <select id="rating" name="rating">
+    <div class="fs-4 pink">Review this Movie</div><br>
+    <div class="input_bar">
+    <input autocomplete="off" autofocus class="form-control" id="review" name="review" placeholder="Review" type="text">
+    </div>
+    <div class="rating_bar">
+	<select id="rating" name="rating" class="form-select">
 	    <option value="5">5 stars</option>
 	    <option value="4">4 stars</option>
 	    <option value="3">3 stars</option>
 	    <option value="2">2 stars</option>
 	    <option value="1">1 star</option>
 	  </select>
-	</td>
-	<br><br>
-	<td>
-	  <button class="btn btn-primary" type="submit">Add Review</button>
+    </div>
+	<br>
+	    <button class="btn btn-primary" type="submit">Add Review</button>
 	</td>
     </tr>
   </table>
 </form>
+<br><br><br>
 
+{% if all_reviews %}
+<div class="fs-4 pink">Reviews</div><br>
+
+
+{% for review in all_reviews %}
+
+<div class="pink">
+    on {{ review.datetime.strftime("%d %B %Y, %H:%M ") }}
+</div>
 <table>
-  {% for review in all_reviews %}
-  <tr>
-    <th>Reviewed by:   {{ review.username }}</th> <td>  </td><td> on {{ review.datetime.strftime("%d %B %Y, %H:%M ") }}</td>
-  </tr>
-  <tr>
-    <th>Review</th><td>{{ review.review_text }}</td>
-  </tr>
-  <tr>
-    <th>Stars</th><td>{{ review.rating }}/5</td>
-  </tr>
-  {% endfor %}
-  </table>
-
+    <tr>
+	<th>@{{ review.username }}  </th><td>  {{ review.review_text }}</td>
+    </tr>
+    <tr>
+	<th>Stars </th><td>  {{ review.rating }}/5</td>
+    </tr>
+</table>
+<br>
+      {% endfor %}
+{% endif %}
 {% endblock %}
+
+  

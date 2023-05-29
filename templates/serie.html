@@ -1,128 +1,151 @@
 {% extends "layout.html" %}
 
 
+
 {% block main %}
+
+<p>
+    <img src="https://image.tmdb.org/t/p/w200{{ serie.poster_path }}" alt="No poster provided."></img>
+</p>
+
+<div class="fs-2 pink">
+    {{ serie.title }} (serie)
+</div><br>
+<div class="pink">
+    {{ serie.first_air_date[:4] }} - {{ serie.last_air_date[:4] }}<br>
+        {% if last_episode %}
+    <th>Last watched episode:</th><td>Season {{ last_episode["season"] }}, Episode {{ last_episode["episode"] }}</td>
+    {% endif %}
+</div><br><br>
 <table>
     <tr>
-	<th>{{serie.title}} (serie)</th><td>{{ serie.first_air_date[:4] }} - {{ serie.last_air_date[:4] }}</td>
-	{% if last_episode %}
-	<th>Last watched episode:</th><td>Season {{ last_episode["season"] }}, Episode {{ last_episode["episode"] }}</td>
-	{% endif %}
+	<th>Languages ------</th>
+	<td>  {{ serie.spoken_languages }}</td>
     </tr>
     <tr>
-	<td>
-	    <img src="https://image.tmdb.org/t/p/w200{{ serie.poster_path }}" alt="poster_image"></img></td><p></p>
-	    <tr>
-		<th>Seasons</th><td>{{ serie.seasons_amt }}</td>
-	    </tr>
-	    <tr>
-		<th>Languages</th><td>{{ serie.spoken_languages }}</td>
-	    </tr>
-	    <tr>
-		<th>Storyline</th><td>{{ serie.tagline }}</td><br><br>
-	    </tr>
-	    <tr>{% if season_data.items() %}
-		<th>Keep track of watched episodes</th>
-		<td>
-		    <ul>
-			<form action="/series/{{serie.tmdb_id}}" method="post">
-			    {% for season_nr, episodes_amt in season_data.items() %}
-			    <li>
-				{{ season_nr }}:
-
-				{% for episode in range(1, episodes_amt+1) %}
-
-				{% if watched_episodes != {} %}
-
-				{% if episode in watched_episodes[season_nr] %}
-
-				{{episode}} <input type="checkbox" name="episode_{{ season_nr }}.{{ episode }}" checked>
-
-				{% else %}
-
-				{{episode}} <input type="checkbox" name="episode_{{ season_nr }}.{{ episode }}">
-
-				{% endif %}
-
-
-				{% else %}
-
-				{{episode}} <input type="checkbox" name="episode_{{ season_nr }}.{{ episode }}">
-				
-				{% endif %}
-
-
-				{% endfor %}
-			    </li>
-			    {% endfor %}
-			    <input type="submit" id="watched_episodes" name="submit_value" value="watched episodes">
-			</form>
-		    </ul>
-		</td>
-		{% endif %}
-	    </tr>
+	<th>Storyline ------</th>
+	<td>  {{ serie.tagline }}</td>
     </tr>
-
+    <tr>
+	<th>Seasons --------</th>
+	<td>  {{ serie.seasons_amt }}</td>
+    </tr>
 </table>
-
+<br><br>
 <form action ="/series/{{serie.tmdb_id}}/", method="post">
     {% if in_watchlist %}
-    <input type="submit" id="to_watch" name="list_value" value="remove from watchlist">
+    <input type="submit" class="btn btn-info" id="to_watch" name="list_value" value="remove from watchlist">
     {% else %}
-    <input type="submit" id="to_watch" name="list_value" value="add to watchlist">
+    <input type="submit" class="btn btn-primary" id="to_watch" name="list_value" value="add to watchlist">
     {% endif %}
     {% if in_watched %}
-    <input type="submit" id="watched" name="list_value" value="unwatched">
+    <input type="submit" id="watched" class="btn btn-info" name="list_value" value="unwatched">
     {% else %}
-    <input type="submit" id="watched" name="list_value" value="watched">
+    <input type="submit" id="watched" class="btn btn-primary" name="list_value" value="watched">
     {% endif %}
-    <select id="list_title" name="list_title" class="form-select" aria-label="Default select example">
-	<option selected>Add to personal list</option>
-	{% for item in list_items %}
-	<option value="{{ item.title }}">{{item.title}}</option>
-	{% endfor %}
-	<option value="new_list">New list</option>
-    </select>
+    <br><br><br>
+</form>
+
+<form action ="/series/{{serie.tmdb_id}}/", method="post">
+    <div class="select_bar">
+	<select id="list_title" name="list_title" class="form-select" aria-label="Default select example" >
+	    <option selected>Add to personal list</option>
+	    {% for item in list_items %}
+	    <option value="{{ item.title }}">{{item.title}}</option>
+	    {% endfor %}
+	    <option value="new_list">New list</option>
+	</select>
+    </div>
     <button class="btn btn-primary" type="submit" name="list_value" id="list" value="list">Add to list</button>
 </form>
 
+<br><br><br>
+{% if season_data.items() %}
+
+<div class="fs-4 pink">
+    Keep track of watched episodes
+</div>
+<form action="/series/{{serie.tmdb_id}}" method="post">
+    {% for season_nr, episodes_amt in season_data.items() %}
+    <li>
+	Season {{ season_nr }}: <br>
+
+	{% for episode in range(1, episodes_amt+1) %}
+
+	{% if watched_episodes != {} %}
+
+	{% if episode in watched_episodes[season_nr] %}
+
+	{{episode}} <input type="checkbox" name="episode_{{ season_nr }}.{{ episode }}" checked>
+
+	{% else %}
+
+	{{episode}} <input type="checkbox" name="episode_{{ season_nr }}.{{ episode }}">
+
+	{% endif %}
+
+
+	{% else %}
+
+	{{episode}} <input type="checkbox" name="episode_{{ season_nr }}.{{ episode }}">
+	
+	{% endif %}
+
+
+	{% endfor %}
+    </li><br>
+    {% endfor %}
+    <input type="submit" id="watched_episodes" name="submit_value" value="watched episodes">
+</form>
+	    </ul>
+    </td>
+    {% endif %}
+    </tr>
+    </tr>
+
+</table>
+<br><br><br>
 <form action="/series/{{ serie.tmdb_id }}" method="post">
-    <table>
-	<tr>
-	    <th>  <label for="rating">Rate this Serie</label></th>
-	    <td>
-		<div class="mb-3">
-		    <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="review" name="review" placeholder="Review" type="text">
-		</div>
-	    </td>
-	    <td>
-		<select id="rating" name="rating">
-		    <option value="5">5 stars</option>
-		    <option value="4">4 stars</option>
-		    <option value="3">3 stars</option>
-		    <option value="2">2 stars</option>
-		    <option value="1">1 star</option>
-		</select>
-	    </td>
-	    <br><br>
-	    <td>
-		<button class="btn btn-primary" type="submit">Add Review</button>
-	    </td>
-	</tr>
-    </table>
+    <div class="fs-4 pink">Review this Serie</div><br>
+    <div class="input_bar">
+	<input autocomplete="off" autofocus class="form-control" id="review" name="review" placeholder="Review" type="text">
+    </div>
+    <div class="rating_bar">
+	<select id="rating" name="rating" class="form-select">
+	    <option value="5">5 stars</option>
+	    <option value="4">4 stars</option>
+	    <option value="3">3 stars</option>
+	    <option value="2">2 stars</option>
+	    <option value="1">1 star</option>
+	</select>
+    </div>
+    <br>
+    <button class="btn btn-primary" type="submit">Add Review</button>
+	</td>
+    </tr>
+</table>
 </form>
 
+<br><br><br>
+{% if all_reviews %}
+<div class="fs-4 pink">Reviews</div><br>
+
+
+{% for review in all_reviews %}
+
+<div class="pink">
+    on {{ review.datetime.strftime("%d %B %Y, %H:%M ") }}
+</div>
 <table>
-    {% for review in all_reviews %}
     <tr>
-	<th>Reviewed by:   {{ review.username }}</th> <td>  </td><td> on {{ review.datetime.strftime("%d %B %Y, %H:%M ") }}</td>
+	<th>@{{ review.username }}  </th><td>  {{ review.review_text }}</td>
     </tr>
     <tr>
-	<th>Review</th><td>{{ review.review_text }}</td>
+	<th>Stars </th><td>  {{ review.rating }}/5</td>
     </tr>
-    <tr>
-	<th>Stars</th><td>{{ review.rating }}/5</td>
-    </tr>
-    {% endfor %}
 </table>
+<br>
+{% endfor %}
+{% endif %}
+
 {% endblock %}

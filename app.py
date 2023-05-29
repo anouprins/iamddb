@@ -92,11 +92,11 @@ def search():
 
     else:
         page_nr = request.form.get("page_nr")
-        print("PAGE NUMBER", page_nr, request.form)
         search_value = request.form.get("search_value")
         search_type = request.form.get("search_type")
+
         search = Search()
-        results = search.search_movies(search_value, page_nr)
+        results = search.search(search_type, search_value, page_nr)
         if search_type == "movies" or search_type == "series":
             return render_template("searched.html", results=results, search_type=search_type, search_value=search_value, username=username, page_nr=page_nr)
         else:
@@ -377,7 +377,7 @@ def series(tmdb_id):
 
             # create new list
             elif list_title == "new_list":
-                return redirect("/create_list")
+                return redirect(f"/create_list/{media_type}/{tmdb_id}")
 
             else:
                 # add movie to existing list
