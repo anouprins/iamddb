@@ -61,3 +61,7 @@ th, td {
 li {
     margin: 10px 0;
 }
+
+.navbar_color {
+    color: red;
+}
