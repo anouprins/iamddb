@@ -12,9 +12,9 @@
     {{ serie.title }} (serie)
 </div><br>
 <div class="pink">
-    {{ serie.first_air_date[:4] }} - {{ serie.last_air_date[:4] }}<br>
+    {{ serie.first_air_date[:4] }} - {{ serie.last_air_date[:4] }}<br><br>
         {% if last_episode %}
-    <th>Last watched episode:</th><td>Season {{ last_episode["season"] }}, Episode {{ last_episode["episode"] }}</td>
+    <th>Last watched episode:  </th><td>Season {{ last_episode["season"] }}, Episode {{ last_episode["episode"] }}</td>
     {% endif %}
 </div><br><br>
 <table>

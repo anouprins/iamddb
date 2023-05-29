@@ -1,7 +1,18 @@
 import requests
 
 class Search():
-    def search_movies(self, search_value: str, page_nr: str):
+
+    def search(self, search_type: str, search_value, page_nr: int):
+        """ Returns search results for given search value """
+        if search_type == "movies":
+            return self.search_movies(search_value, page_nr)
+
+        if search_type == "series":
+            return self.search_series(search_value, page_nr)
+
+        raise Exception
+
+    def search_movies(self, search_value: str, page_nr: int):
         """ Returns movie search results from tmdb api """
 
         page_nr = int(page_nr)

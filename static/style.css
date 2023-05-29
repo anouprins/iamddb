@@ -14,9 +14,11 @@
     color: pink;
 }
 
+
 body {
     color: teal;
     font-family: public pixel;
+    
 }
 
 @font-face {
@@ -35,4 +37,27 @@ body {
     src: url("MaginerfreeRegular-ALodL (copy).otf") format("opentype");
 }
 
+.input_bar {
+    max-width: 850px;
+    heigth: 300px;
+}
 
+.select_bar {
+    max-width: 400px;
+}
+
+.rating_bar {
+    max-width: 200px;
+}
+
+.pink {
+    color:  #ff6699;
+}
+
+th, td {
+    padding: 10px;
+}
+
+li {
+    margin: 10px 0;
+}

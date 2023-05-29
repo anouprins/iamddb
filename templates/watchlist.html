@@ -2,12 +2,15 @@
 {% block main %}
 
 <title>Watchlist</title>
-<h>Watchlist</h><br>
+
+<div class="fs-2 pink">Watchlist</div>
+
+
 <ol class="list-group list-group-numbered">
   {% for key, item in watchlist_data.items() %}
       <li><a href="{{item[0].media_type}}s/{{ item[0].tmdb_id }}">
 	{{ item[0].title }}</a>
-{% if item[0].air_date %}{{ item[0].air_date }}{% endif %}{% if item[0].first_air_date %}{{ item[0].first_air_date[:4] }} - {{ item[0].last_air_date[:4] }} {% endif %} ({{ item[0].media_type }})<table>
+{% if item[0].air_date %}{{ item[0].air_date }}{% endif %}{% if item[0].first_air_date %}{{ item[0].first_air_date[:4] }} - {{ item[0].last_air_date[:4] }} {% endif %} ({{ item[0].media_type }})  <table>
 
   <tr>
     <td>
@@ -16,8 +19,7 @@
       {% endif %}
     </td>
     {% if item[1] %}
-    <span class="badge bg-primary rounded-pill">S:{{item[1]["season"]}} E:{{ item[1]["episode"] }}</span>
-    <th>Last watched episode:</th><td>Season {{ item[1]["season"] }}, Episode {{ item[1]["episode"] }}</td>
+    <span class="badge bg-primary rounded-pill"> S:{{item[1]["season"]}} E:{{ item[1]["episode"] }} </span>
     {% endif %}
   </tr>
   </table>

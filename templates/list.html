@@ -1,27 +1,35 @@
+
 {% extends "layout.html" %}
 {% block main %}
 
-<title>{{ list_title }}</title>
-<h>{{ list_title }}</h><br>
+<title>{{list_title}}</title>
 
-{% for key, item in list_objects.items() %}
-<li><a href="/{{ item[0].media_type }}s/{{ item[0].tmdb_id }}">
-    {{ item[0].title }}</a>
-  {% if item[0].air_date %}{{ item[0].air_date }}{% endif %}{% if item[0].first_air_date %}{{ item[0].first_air_date[:4] }} - {{ item[0].last_air_date[:4] }} {% endif %} ({{ item[0].media_type }})<table>
+<div class="fs-2 pink">{{ list_title }}</div>
+<ol class="list-group list-group-numbered">
+    {% for key, item in list_objects.items() %}
+    <li><a href="/{{item[0].media_type}}s/{{ item[0].tmdb_id }}">
+	{{ item[0].title }}</a>
+	{% if item[0].air_date %}
+	{{ item[0].air_date }}
+	{% endif %}
+	{% if item[0].first_air_date %}
+	{{ item[0].first_air_date[:4] }} - {{ item[0].last_air_date[:4] }}
+	{% endif %}
+	({{ item[0].media_type }})
+	<table>
+	    <tr>
+		<td>
+		    {% if item[0].poster_path %}
+		    <img src="https://image.tmdb.org/t/p/w200{{ item[0].poster_path }}" alt="No poster provided"</img>
+		    {% endif %}
+		</td>
+		{% if item[1] %}
+		<span class="badge bg-primary rounded-pill"> S:{{item[1]["season"]}} E:{{ item[1]["episode"] }} </span>
+		{% endif %}
+	    </tr>
+	</table>
+    </li>
+    {% endfor %}
 
-  <tr>
-    <td>
-      {% if item[0].poster_path %}
-      <img src="https://image.tmdb.org/t/p/w200{{ item[0].poster_path }}" alt="No poster provided."></img>
-      {% endif %}
-    </td>
-        {% if item[1] %}
-    <th>Last watched episode:</th><td>Season {{ item[1]["season"] }}, Episode {{ item[1]["episode"] }}</td>
-    {% endif %}
-  </tr>
-  </table>
-  </li>
-{% endfor %}
+</ol>
 {% endblock %}
-
-

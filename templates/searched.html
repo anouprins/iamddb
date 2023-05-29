@@ -1,43 +1,43 @@
 {% extends "layout.html" %}
 
 {% block main %}
-<h> Results for:    {{search_value}}</h>
-{{results["total_pages"]}}
-<table>
-  <tr>
-    <th>total results</th><td>{{ results["total_results"] }}</td>
-    <th>page</th><td>{{ page_nr }}</td>
-  </tr>
-  {% for item in results["results"]%}
-  <tr>
-    <td>
-      <img src="https://image.tmdb.org/t/p/w200{{ item["poster_path"] }}" alt="No poster provided"></img>
-      <a href="/{{ search_type }}/{{item["id"] }}">
+<div class="fs-2 pink"> {{ results["total_results"] }} Results for:   {{ search_value }}</div><br>
+<div class="fs-3 pink"> page {{ page_nr }}</div><br>
+
+<ol class="list-group list-group-numbered">
+    {% for item in results["results"]%}
+    <li>      <a href="/{{ search_type }}/{{item["id"] }}">
 	{% if item["original_title"] %}
-	<b>{{ item["original_title"] }}</b>
+	{{ item["original_title"] }} ({{ search_type }})</a>
+	{% else %}
+	{{ item["original_name"] }} ({{ search_type }})</a>
 	{% endif %}
-	{% if item["original_name"] %}
-	<b>{{ item["original_name"] }}</b>
+
+	{% if search_type == "serie" %}
+	<td>{{ item["first_air_date"] }} - {{ item["last_air_date"] }}</td>
 	{% endif %}
 	
-    </td>
+	{% if search_type == "movie" %}
+	<td>{{ item["release_date"] }}</td>
+	{% endif %}
 
-    {% if search_type == "serie" %}
-    <td>{{ item["first_air_date"] }} - {{ item["last_air_date"] }}</td>
-    {% endif %}
-    {% if search_type == "movie" %}
-    <td>{{ item["release_date"] }}</td>
-    {% endif %}
-    {% if item["release_date"] %}
-    <td>{{item["release_date"][:4]}}</td>
-    {% endif %}
-    <td></td>
+	<table>
+	    <tr>
+		<td>
+		    {% if item["poster_path"] %}
+		    <img src="https://image.tmdb.org/t/p/w200{{ item["poster_path"] }}" alt="No poster provided"></img>
+		    {% endif %}
+		</td>
+	    </tr>
+	</table>
+    </li>
+    {% endfor %}
 
-    <td>
-    </td>
-  </tr>
-  {% endfor %}
-</table>
+</ol>
+
+
+
+	
 <nav aria-label="page navigation">
     <ul class="pagination">
 	{% if results["page"] -1 > 0 %}
