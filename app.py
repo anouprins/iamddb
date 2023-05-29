@@ -369,13 +369,18 @@ def series(tmdb_id):
         if submit_value == "watched episodes":
             checked_episodes = [form_value[form_value.index('_') + 1:] for form_value in request.form if form_value.startswith('episode')]
 
-            for episode in checked_episodes:
-                # extract season_nr and episode_nr from form values
-                season_nr = episode[:episode.index('.')]
-                episode_nr = episode[episode.index('.')+1:]
+            episodes.evaluate_checked_episodes(tmdb_id, user_id, checked_episodes)
+            # for episode in checked_episodes:
+            #     # extract season_nr and episode_nr from form values
+            #     season_nr = episode[:episode.index('.')]
+            #     episode_nr = episode[episode.index('.')+1:]
 
-                # set episode as watched in database
-                episodes.add_watched(tmdb_id, season_nr, episode_nr, user_id)
+            #     # set episode as watched in database
+            #     episodes.add_watched(tmdb_id, season_nr, episode_nr, user_id)
+            
+
+
+            # delete the episodes that were unchecked
 
             watched_episodes = episodes.lookup_watched_episodes(tmdb_id, user_id)
             last_episode = episodes.lookup_last_watched(tmdb_id, user_id)

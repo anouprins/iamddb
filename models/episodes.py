@@ -50,6 +50,33 @@ class Episode():
                 db.session.delete(item)
             db.session.commit()
 
+    def evaluate_checked_episodes(self, tmdb_id: str, user_id: int, checked_episodes: list) -> None:
+        """
+        Looks up difference between watched episodes in database and checked episodes, then removes the episodes from database that were unchecked, adds the episodes in database that were not yet there
+        """
+        watched_episodes = self.lookup_watched_episodes(tmdb_id, user_id)
+        watched_episodes_list = []
+        for key, value in watched_episodes.items():
+            for episode in value:
+                watched_episodes_list.append(f"{key}.{episode}")
+
+        episodes_to_delete = [item for item in watched_episodes_list if item not in checked_episodes]
+        episodes_to_add = [item for item in checked_episodes if item not in watched_episodes_list]
+
+
+        for episode in episodes_to_add:
+            # extract season_nr and episode_nr from form values
+            season_nr = episode[:episode.index('.')]
+            episode_nr = episode[episode.index('.')+1:]
+            self.set_watched(tmdb_id, season_nr, episode_nr, user_id)
+
+        for episode in episodes_to_delete:
+            # extract season_nr and episode_nr from form values
+            season_nr = episode[:episode.index('.')]
+            episode_nr = episode[episode.index('.')+1:]
+            self.set_unwatched(tmdb_id, season_nr, episode_nr, user_id)
+            
+
     def lookup_watched_episodes(self, tmdb_id: str, user_id: int) -> dict:
         """ Returns dict of all episodes for user and tmdb item that are set as watched """
         # find all episodes with from serie watched by user
