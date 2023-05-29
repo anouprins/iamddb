@@ -8,17 +8,18 @@ Search
 
 
 <form action="/search" method="post">
-  <div class="mb-3">
-    <input autocomplete="on" autofocus class="form-control mx-auto w-auto" id="search" name="search_value" placeholder="search_value" type="text">
-  </div><br>
+  <div class="d-flex align-items-center">
+    <div class="mx-auto">
+      <input autocomplete="on" autofocus class="form-control mx-auto w-auto" id="search" name="search_value" placeholder="search_value" type="text">
+      <input class="mx-auto" type="radio" id="movies" name="search_type" value="movies">
+      <label class="mx-auto" for="movies">movies</label><br>
+      <input type="radio" id="series" name="search_type" value="series">
+      <label for="series">series</label><br>
+      <input type="hidden" name="page_nr" value="1">
 
-  <input type="radio" id="movies" name="search_type" value="movies">
-  <label for="movies">movies</label><br>
-  <input type="radio" id="series" name="search_type" value="series">
-  <label for="series">series</label><br>
-  <input type="hidden" name="page_nr" value="1">
-  <button class="btn btn-primary" type="submit">Search</button><br>
-
+      <button class="btn btn-primary" type="submit">Search</button><br>
+    </div>
+  </div>
 </form>
 
 {% endblock %}

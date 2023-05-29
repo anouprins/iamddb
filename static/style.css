@@ -2,12 +2,37 @@
     color: blue;
 }
 
-body {
+.header {
+
+}
+
+.pages {
     color: pink;
+}
+
+#navbar {
+    color: pink;
+}
+
+body {
+    color: teal;
     font-family: public pixel;
 }
 
-@fontface {
-    font-family: "public pixel";
-    src: url("public-pixel-font/PublicPixel-z84yD.ttf") format("true type");
+@font-face {
+    font-family: public pixel;
+    
+    src: url("PublicPixel-z84yD.ttf") format("truetype")
 }
+
+@font-face {
+    font-family: maginer;
+    src: url("MaginerfreeRegular-ALodL (copy).otf") format("opentype");
+}
+
+@font-face {
+    font-family: ;
+    src: url("MaginerfreeRegular-ALodL (copy).otf") format("opentype");
+}
+
+

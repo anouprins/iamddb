@@ -3,7 +3,7 @@
 
 <title>Watchlist</title>
 <h>Watchlist</h><br>
-<ol>
+<ol class="list-group list-group-numbered">
   {% for key, item in watchlist_data.items() %}
       <li><a href="{{item[0].media_type}}s/{{ item[0].tmdb_id }}">
 	{{ item[0].title }}</a>
@@ -15,7 +15,8 @@
       <img src="https://image.tmdb.org/t/p/w200{{ item[0].poster_path }}" alt="poster_image"></img>
       {% endif %}
     </td>
-        {% if item[1] %}
+    {% if item[1] %}
+    <span class="badge bg-primary rounded-pill">S:{{item[1]["season"]}} E:{{ item[1]["episode"] }}</span>
     <th>Last watched episode:</th><td>Season {{ item[1]["season"] }}, Episode {{ item[1]["episode"] }}</td>
     {% endif %}
   </tr>

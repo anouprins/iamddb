@@ -25,38 +25,38 @@
 		<th>Keep track of watched episodes</th>
 		<td>
 		    <ul>
-		<form action="/series/{{serie.tmdb_id}}" method="post">
-		    {% for season_nr, episodes_amt in season_data.items() %}
-		    <li>
-			{{ season_nr }}:
+			<form action="/series/{{serie.tmdb_id}}" method="post">
+			    {% for season_nr, episodes_amt in season_data.items() %}
+			    <li>
+				{{ season_nr }}:
 
-			{% for episode in range(1, episodes_amt+1) %}
+				{% for episode in range(1, episodes_amt+1) %}
 
-			{% if watched_episodes != {} %}
+				{% if watched_episodes != {} %}
 
-			{% if episode in watched_episodes[season_nr] %}
+				{% if episode in watched_episodes[season_nr] %}
 
-			{{episode}} <input type="checkbox" name="episode_{{ season_nr }}.{{ episode }}" checked>
+				{{episode}} <input type="checkbox" name="episode_{{ season_nr }}.{{ episode }}" checked>
 
-			{% else %}
+				{% else %}
 
-			{{episode}} <input type="checkbox" name="episode_{{ season_nr }}.{{ episode }}">
+				{{episode}} <input type="checkbox" name="episode_{{ season_nr }}.{{ episode }}">
 
-			{% endif %}
-
-
-			{% else %}
-
-			{{episode}} <input type="checkbox" name="episode_{{ season_nr }}.{{ episode }}">
-			
-			{% endif %}
+				{% endif %}
 
 
-			{% endfor %}
-		    </li>
-		    {% endfor %}
-		    <input type="submit" id="watched_episodes" name="submit_value" value="watched episodes">
-		</form>
+				{% else %}
+
+				{{episode}} <input type="checkbox" name="episode_{{ season_nr }}.{{ episode }}">
+				
+				{% endif %}
+
+
+				{% endfor %}
+			    </li>
+			    {% endfor %}
+			    <input type="submit" id="watched_episodes" name="submit_value" value="watched episodes">
+			</form>
 		    </ul>
 		</td>
 		{% endif %}
