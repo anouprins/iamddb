@@ -1,14 +1,19 @@
+"""
+Movie model to manipulate "series" table in IAMDDB database
 
+Movie data is retrieved by connecting to free TMDB database with personal API key, if movie data not yet in IAMDDB database.
+The relevant data is then added to IAMDDB database for future use.
+Source -- https://developer.themoviedb.org/docs
+"""
 import requests
 from typing import Union
 
+
 from ..db.models import db
-from ..db.models import Movie as MovieDB, Genre as GenreDB, People as PeopleDB, Actors as ActorsDB, Director as DirectorDB
+from ..db.models import Movie as MovieDB
 from .to_watch import Watchlist
 from .watched import Watched
 from .lists import List
-
-""" Functions to get movie data from tmbd Api database"""
 
 
 class Movie():

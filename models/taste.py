@@ -1,5 +1,16 @@
-import requests
-from typing import Union
+"""
+Taste model
+This model helps calculate average popularity score of all items in watchlist. 
+
+Popularity data from movie and serie items is retrieved by connecting to free TMDB database with personal API key.
+Source -- https://developer.themoviedb.org/docs
+
+Functions
+get_score -- Returns total popularity score based average of tmdb popularity scores of movies in watchlist
+get_all_tmdb_watchlist -- Returns a list of all tmdb items in watchlist
+calculate_score -- Returns accumulation of all tmdb scores
+get_popularity_score -- 
+"""
 
 from ..db.models import db
 from .to_watch import Watchlist
@@ -7,8 +18,13 @@ from .movies import Movie
 from .serie import Serie
 
 class Taste():
-    def get_score(self, user_id: int):
-        """ Returns total popularity score based average of tmdb popularity scores of movies in watchlist """
+    def get_score(self, user_id: int) -> float:
+        """ Returns total popularity score based average of TMDB popularity scores of movies in watchlist
+        Parameters
+        user_id -- user id
+
+        Returns
+        self.calculate_score(items) -- popularity score for user"""
         # get all items watchlist
         items = self.get_all_tmdb_watchlist(user_id)
 

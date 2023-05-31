@@ -9,7 +9,6 @@ class Search():
 
         if search_type == "series":
             return self.search_series(search_value, page_nr)
-
         raise Exception
 
     def search_movies(self, search_value: str, page_nr: int):

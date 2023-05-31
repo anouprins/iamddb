@@ -65,3 +65,15 @@ li {
 .navbar_color {
     color: red;
 }
+
+.only_text {
+    text-align: center;
+    line-height: 60px;
+    color: #3bc56f;
+}
+
+.error_message {
+    line-height: 60px;
+    color: yellow;
+}
+
