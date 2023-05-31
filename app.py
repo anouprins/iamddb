@@ -78,7 +78,7 @@ def taste():
         user_id = session.get("user_id")
         username = session.get("username")
 
-    list_item = ListItem
+    list_item = List()
     list_items = list_item.get_all_items(user_id)
 
     if request.method == "GET":
@@ -264,10 +264,12 @@ def list(title):
         username = session.get("username")
 
     # extract list items
-    list_item = List()
-    list_items = list_item.get_all_items(user_id, title)
+    list_obj = List()
+    list_items = list_obj.get_all_items(user_id)
 
-    list_data = get_list_dict(list_items, user_id)
+    list_item = ListItem()
+    list_item_list = list_item.get_all_items(user_id, title)
+    list_data = get_list_dict(list_item_list, user_id)
 
     # return list page
     return render_template("list.html",
@@ -475,9 +477,12 @@ def movies(tmdb_id):
     if request.method == "GET":
 
         # return movie page
-        return render_template("movie.html", movie=movie_data,
-                               username=username, all_reviews=all_reviews,
-                               list_items=list_items, in_watched=in_watched,
+        return render_template("movie.html",
+                               movie=movie_data,
+                               username=username,
+                               all_reviews=all_reviews,
+                               list_items=list_items,
+                               in_watched=in_watched,
                                in_watchlist=in_watchlist)
 
     elif request.method == "POST":
@@ -541,7 +546,8 @@ def movies(tmdb_id):
                                        all_reviews=all_reviews,
                                        error="empty_form",
                                        in_watched=in_watched,
-                                       in_watchlist=in_watchlist)
+                                       in_watchlist=in_watchlist,
+                                       list_items=list_items)
 
             # return error statement if rating is empty
             if not request.form.get("rating"):
@@ -551,8 +557,8 @@ def movies(tmdb_id):
                                        all_reviews=all_reviews,
                                        error="empty_form",
                                        in_watched=in_watched,
-                                       in_watchlist=in_watchlist)
-
+                                       in_watchlist=in_watchlist,
+                                       list_items=list_items)
             # add review
             add_review = reviews.add_review(tmdb_id, user_id, rating, review)
 
@@ -567,16 +573,16 @@ def movies(tmdb_id):
                                        all_reviews=all_reviews,
                                        error="review_unavailable",
                                        in_watched=in_watched,
-                                       in_watchlist=in_watchlist)
-
+                                       in_watchlist=in_watchlist,
+                                       list_items=list_items)
         # return movie page
         return render_template("movie.html",
                                movie=movie_data,
                                username=username,
                                all_reviews=all_reviews,
                                in_watched=in_watched,
-                               in_watchlist=in_watchlist)
-
+                               in_watchlist=in_watchlist,
+                               list_items=list_items)
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
