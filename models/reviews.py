@@ -1,8 +1,15 @@
+"""
+Model to manipulate table "reviews" in IAMDDB database
+
+Functions
+add_review -- adds review to database
+review_available -- checks if user already submitted a review for tmdb object
+get_all_reviews -- returns all reviews for tmdb object
+"""
+
 from ..db.models import Review as ReviewDB
 from ..db.models import db
 from .users import User
-
-""" Review Model """
 
 
 class Review():
@@ -17,17 +24,6 @@ class Review():
             return True
 
         return False
-
-    def lookup_username(self, user_id: int) -> str:
-        """ Returns username from user id in string """
-        user = User()
-        username = user.get_username(user_id)
-        return username
-
-    def lookup_review(self, tmdb_id: int, user_id: int):
-        """ Returns review from database by given user and for given book """
-        review = ReviewDB.query.filter(ReviewDB.tmdb_id==tmdb_id, ReviewDB.user_id == user_id).all()
-        return review
 
     def review_available(self, tmdb_id: int, user_id: int) -> bool:
         """ Returns True if user has not yet committed a review for book, False otherwise """

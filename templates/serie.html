@@ -3,7 +3,7 @@
 
 
 {% block main %}
-
+<title>{{ serie.title }}</title>
 <p>
     <img src="https://image.tmdb.org/t/p/w200{{ serie.poster_path }}" alt="No poster provided."></img>
 </p>
@@ -121,18 +121,24 @@
     </div>
     <br>
     <button class="btn btn-primary" type="submit">Add Review</button>
-	</td>
+    </td>
     </tr>
 </table>
 </form>
 
+<div class="error_message">
+    {% if error == "empty_form" %}
+    Make sure to fill in all the forms!
+    {% endif %}
+    {% if error == "review_unavailable" %}
+    You can only review this serie once.
+    {% endif %}
+    
+</div>
 <br><br><br>
 {% if all_reviews %}
 <div class="fs-4 pink">Reviews</div><br>
-
-
 {% for review in all_reviews %}
-
 <div class="pink">
     on {{ review.datetime.strftime("%d %B %Y, %H:%M ") }}
 </div>
@@ -147,5 +153,4 @@
 <br>
 {% endfor %}
 {% endif %}
-
 {% endblock %}

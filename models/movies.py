@@ -1,9 +1,22 @@
 """
-Movie model to manipulate "series" table in IAMDDB database
+Movie model to manipulate "movies" table in IAMDDB database
 
 Movie data is retrieved by connecting to free TMDB database with personal API key, if movie data not yet in IAMDDB database.
 The relevant data is then added to IAMDDB database for future use.
 Source -- https://developer.themoviedb.org/docs
+
+Functions
+successful_tmdb -- checks if request with TMDB database was successful
+check_and_retrieve_database -- checks if movie in IAMDDB database,
+-- if not: retrieves it using lookup_movie_tmdb and adds it to IAMDDB database using , then retrieves it from IAMDDB database
+-- if yes: retrieves it from IAMDDB database
+lookup_movie_tmdb -- retrieves movie data from api request
+lookup_movie_iamddb -- retrieves movie data from IAMDDB database
+in_database_iamddb -- checks if movie data in IAMDDB database
+in_list -- checks if movie in watchlist or watched list
+add_database_iamddb -- adds movie to database
+
+by: Anou Prins
 """
 import requests
 from typing import Union
@@ -116,17 +129,3 @@ class Movie():
 
         db.session.add(movie)
         db.session.commit()
-
-        genres = details["genres"]
-
-        # TODO
-        # add cast movie
-        # add directors movie
-
-
-        # add each genre object
-        for item in genres:
-            genre = GenreDB(tmdb_id=tmdb_id, name=item["name"])
-            db.session.add(genre)
-            db.session.commit()
-

@@ -1,7 +1,21 @@
+"""
+Models initializations to create tables in IAMDDB database (using SQLalchemy)
+
+Tables in IAMDDB database:
+-- users
+-- movies
+-- series
+-- seasons
+-- episodes
+-- watchlists
+-- lists
+-- watched
+-- list_items
+"""
+
 from flask_sqlalchemy import SQLAlchemy
 import datetime
 
-from .users import User
 
 db = SQLAlchemy()
 
@@ -66,33 +80,6 @@ class Episode(db.Model):
     episode_nr = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, nullable=False)
     watched = db.Column(db.Boolean, default=False, nullable=False)
-
-
-class Genre(db.Model):
-    __tablename__ = "genres"
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    tmdb_id = db.Column(db.String, nullable=False)
-    name = db.Column(db.String, nullable=False)
-
-
-class People(db.Model):
-    __tablename__ = "people"
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String, nullable=False)
-
-
-class Actors(db.Model):
-    __tablename__ = "actors"
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    tmdb_id = db.Column(db.String, nullable=False)
-    person_id = db.Column(db.Integer, db.ForeignKey("people.id"), nullable=False)
-
-
-class Director(db.Model):
-    __tablename__ = "directors"
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    tmdb_id = db.Column(db.String, nullable=False)
-    person_id = db.Column(db.Integer, db.ForeignKey("people.id"), nullable=False)
 
 
 class Watchlist(db.Model):

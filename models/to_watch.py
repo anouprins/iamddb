@@ -1,5 +1,6 @@
-import requests
-from typing import Union
+"""
+Watchlist data
+"""
 
 from ..db.models import db
 from ..db.models import Watchlist as WatchlistDB

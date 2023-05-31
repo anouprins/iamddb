@@ -1,27 +1,26 @@
-import requests
+"""
+Model for table "episodes" in IAMDDB database
+
+Functions
+exists -- checks if episode exists in database
+set_unwatched -- sets one episode as unwatched, only if it exists (using exists function)
+evaluate_checked_episodes -- adds new episodes and deletes unchecked episodes that exist in "episode" table (using set_watched/set_unwatched)
+lookup_watched_episodes -- returns all episodes for serie registered in database
+lookup_last_watched -- returns last episode for serie registered in database
+set_watched -- adds episode to database
+add_episode -- adds new episode to episode data dict
+translate_dict -- turns list of episode objects into dictionary
+
+by: Anou Prins
+"""
 from typing import Union
+
 
 from ..db.models import db
 from ..db.models import Episode as EpisodeDB
 
 
 class Episode():
-    """ Model for database table "episodes" """
-    def add_watched(self, tmdb_id: str, season_nr: int, episode_nr: int, user_id: int) -> None:
-        """ Sets an episode as watched
-        Paramaters
-        tmdb_id -- tmdb id
-        season_nr -- season number
-        episode_nr -- episode number
-        user_id -- user id """
-        # make new episode object if not yet in database
-        if not self.exists(tmdb_id, season_nr, episode_nr, user_id):
-            self.set_watched(tmdb_id, season_nr, episode_nr, user_id)
-
-        # update episode if it is set as 'unwatched'
-        if not self.is_watched(tmdb_id, season_nr, episode_nr, user_id):
-            self.update_watched(tmdb_id, season_nr, episode_nr, user_id)
-
     def exists(self, tmdb_id: str, season_nr: int, episode_nr: int, user_id: int) -> None:
         """ Returns True if episode object exists, False otherwise
         Paramaters
@@ -29,24 +28,32 @@ class Episode():
         season_nr -- season number
         episode_nr -- episode number
         user_id -- user id """
+        # search for episode in database
         item = EpisodeDB.query.filter(EpisodeDB.tmdb_id==tmdb_id,
                                       EpisodeDB.season_nr==season_nr,
                                       EpisodeDB.episode_nr==episode_nr,
                                       EpisodeDB.user_id==user_id).all()
 
+        # episode does not exist
         if item == []:
             return False
 
+        # episode exists
         return True
 
-    def set_unwatched(self, tmdb_id: str, season_nr: int, episode_nr: int, user_id: int) -> None:
-        """ Removes watched episode from database 
+    def set_unwatched(self, tmdb_id: str, episode_str: str, user_id: int) -> None:
+        """ Removes watched episode from database
         Paramaters
         tmdb_id -- tmdb id
         season_nr -- season number
         episode_nr -- episode number
         user_id -- user id """
-        # only remove connection if connection exists
+
+        # extract season_nr and episode_nr from form values
+        season_nr = episode_str[:episode_str.index('.')]
+        episode_nr = episode_str[episode_str.index('.')+1:]
+
+        # only remove episode if episode exists
         if self.exists(tmdb_id, season_nr, episode_nr, user_id):
 
             # query all items from database with matching user_id and tmdb_id
@@ -74,45 +81,34 @@ class Episode():
         user_id -- user id
         checked_episodes -- list of episodes checked, episodes are presented as [season].[episode] """
 
-        # extract watched episodes from database
+        # get users watched episodes
         watched_episodes = self.lookup_watched_episodes(tmdb_id, user_id)
 
         watched_episodes_list = []
 
-        # iterate over watched episodes seasons 
+        # iterate over seasons
         for key, value in watched_episodes.items():
-
-            # iterate over episodes in season
+            # iterate over episodes
             for episode in value:
-
-                # add episode to watched episode list
+                # add episode to list
                 watched_episodes_list.append(f"{key}.{episode}")
 
-        # evaluate episodes to delete and to add to database
-        episodes_to_delete = [item for item in watched_episodes_list if item not in checked_episodes]
-        episodes_to_add = [item for item in checked_episodes if item not in watched_episodes_list]
+        # determine which to add/delete
+        episodes_to_delete = [
+            item for item in watched_episodes_list if item not in checked_episodes]
+        episodes_to_add = [
+            item for item in checked_episodes if item not in watched_episodes_list]
 
-        # itereate over episodes to add
+        # add episodes
         for episode in episodes_to_add:
+            self.set_watched(tmdb_id, episode, user_id)
 
-            # extract season_nr and episode_nr from form values
-            season_nr = episode[:episode.index('.')]
-            episode_nr = episode[episode.index('.')+1:]
-
-            # add episode to database
-            self.set_watched(tmdb_id, season_nr, episode_nr, user_id)
-
+        # delete episodes
         for episode in episodes_to_delete:
-
-            # extract season_nr and episode_nr from form values
-            season_nr = episode[:episode.index('.')]
-            episode_nr = episode[episode.index('.')+1:]
-
-            # delete episode from database
-            self.set_unwatched(tmdb_id, season_nr, episode_nr, user_id)
+            self.set_unwatched(tmdb_id, episode, user_id)
 
     def lookup_watched_episodes(self, tmdb_id: str, user_id: int) -> dict:
-        """ Returns dict of all episodes for user and tmdb item that are set as watched 
+        """ Returns dict of all episodes for user and tmdb item that are set as watched
         Paramaters
         tmdb_id -- tmdb id
         user_id -- user id
@@ -207,13 +203,21 @@ class Episode():
         episode_data[season_nr] = [episode_nr]
         return episode_data
 
-    def set_watched(self, tmdb_id: str, season_nr: int, episode_nr: int, user_id: int) -> None:
+    def set_watched(self, tmdb_id: str, episode_str: str, user_id: int) -> None:
         """ Adds episode to database
         Paramaters
         tmdb_id -- tmdb id
         season_nr -- season number
         episode_nr -- episode number
         user_id -- user id """
+
+        # extract season_nr and episode_nr from form values
+        season_nr = episode_str[:episode_str.index('.')]
+        episode_nr = episode_str[episode_str.index('.')+1:]
+
+        # only remove episode if episode exists
+        if self.exists(tmdb_id, season_nr, episode_nr, user_id):
+            return None
 
         # make episode object
         watched = EpisodeDB(tmdb_id=tmdb_id,

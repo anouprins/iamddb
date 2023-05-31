@@ -6,7 +6,7 @@
 
 <div class="fs-2 pink">{{ list_title }}</div>
 <ol class="list-group list-group-numbered">
-    {% for key, item in list_objects.items() %}
+    {% for key, item in list_data.items() %}
     <li><a href="/{{item[0].media_type}}s/{{ item[0].tmdb_id }}">
 	{{ item[0].title }}</a>
 	{% if item[0].air_date %}

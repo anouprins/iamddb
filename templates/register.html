@@ -1,31 +1,27 @@
 {% extends "layout.html" %}
 
-{% block title %}
-Register
-{% endblock %}
-
 {% block main %}
+<title>Register</title>
 
-<h>
-    {% if error == "password_incorrect" %}
-    Passwords did not match, try again.
-    {% endif %}
-    {% if error == "username_unavailable" %}
-    Username already exists, try again.
-    {% endif %}
-    {% if error == "empty_form" %}
-    Make sure to fill out all the boxes, try again.
-    {% endif %}
+<div class="text_page">
+    <form action="/register" method="post">
 
-</h>
-<form action="/register" method="post">
-    <div class="d-flex align-items-center">
-	<div class="mx-auto">
-	    <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="username" name="username" placeholder="Username" type="text"><br>
-	    <input class="form-control mx-auto w-auto" id="password" name="password" placeholder="Password" type="password"><br>
-	    <input class="form-control mx-auto w-auto" id="confirmation" name="confirmation" placeholder="confirmation" type="password"><br>
-	    <button class="btn btn-primary" type="submit">Register</button>
+	<div class="d-flex align-items-center">
+	    <div class="mx-auto">
+		<input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="username" name="username" placeholder="Username" type="text"><br>
+		<input class="form-control mx-auto w-auto" id="password" name="password" placeholder="Password" type="password"><br>
+		<input class="form-control mx-auto w-auto" id="confirmation" name="confirmation" placeholder="confirmation" type="password"><br>
+		<button class="btn btn-primary" type="submit">Register</button>
+	    </div>
 	</div>
+    </form>
+    <div class="error_message">
+	{% if error == "empty_form" %}
+	Make sure to fill in all the forms!
+	{% endif %}
+	{% if error == "username_unavailable" %}
+	This username is already in use. 
+	{% endif %}
     </div>
-</form>
+</div>
 {% endblock %}

@@ -1,29 +1,48 @@
 """
-Flask app that makes app run.
+App file for IAMDDB website.
 
+
+Page routes
+-- search movies or series, using TMDB database
+-- serie page, shows serie info, user can add serie to lists(watchlist, watched, personal lists), user can add/remove episodes as watched, user can add reviews, reviews are shown
+-- movie page, shows movie info, user can add movie to lists(watchlist, watched, personal lists), user can add reviews, reviews are shown
+-- watched page, all movies and series in list are shown
+-- watchlist page, all movies and series in list are shown
+-- list page, all movies and series in list are shown
+-- taste page, shows popularity average of users watchlist
+-- login page
+-- logout
+-- register
+
+
+for serie and movie pages, serie/movie data is retrieved from:
+--- TMDB database if not yet in IAMDDB database, and serie data will be put in IAMDDB database for future
+--- IAMDDB database if already in IAMDDB database
+
+source TMDB database: https://developer.themoviedb.org/docs
+
+by: Anou Prins
 """
 import os
-
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 
-from .helpers import login_required, pwd_match
+from .helpers import login_required, pwd_match, get_list_dict, create_list_item, get_season_data
 from .models.users import *
 from .models.serie import Serie
 from .models.movies import Movie
 from .models.episodes import Episode
-from .models.seasons import Season
 from .models.search import Search
 from .models.to_watch import Watchlist
 from .models.watched import Watched
 from .models.reviews import Review
 from .models.lists import List
-from .models.list_users import ListUser
 from .models.list_items import ListItem
 from .models.taste import Taste
+
 
 app = Flask(__name__)
 
@@ -55,20 +74,11 @@ def after_request(response):
 def taste():
     """ Taste page """
     with app.app_context():
-        # extract id
+        # extract user info
         user_id = session.get("user_id")
+        username = session.get("username")
 
-        # extract username
-        if user_id:
-            user = User()
-            username = user.get_username(user_id)
-
-        # if logged out, username is empty
-        else:
-            username = ""
-
-    # extract all personal list data
-    list_item = List()
+    list_item = ListItem
     list_items = list_item.get_all_items(user_id)
 
     if request.method == "GET":
@@ -95,19 +105,11 @@ def taste():
 def search():
     """ Search page """
     with app.app_context():
-        # extract user id
+        # extract user info
         user_id = session.get("user_id")
+        username = session.get("username")
 
-        # extract username
-        if user_id:
-            user = User()
-            username = user.get_username(user_id)
-
-        # if logged out, username is empty
-        else:
-            username = ""
-
-    # extract all personal list data
+    # list data
     list_item = List()
     list_items = list_item.get_all_items(user_id)
 
@@ -118,28 +120,29 @@ def search():
                                list_items=list_items)
 
     elif request.method == "POST":
-        # extract form data
         page_nr = request.form.get("page_nr")
         search_value = request.form.get("search_value")
         search_type = request.form.get("search_type")
 
-        # return error statement if search_type was not selected
+        # empty form error
         if not search_type:
             return render_template("search.html",
                                    username=username,
                                    list_items=list_items,
                                    error="empty_form")
 
-        # return error statement if search_value was not selected
+        # empty form error
         elif not search_value:
-            return render_template("search.html", username=username,
-                                   list_items=list_items, error="empty_form")
+            return render_template("search.html",
+                                   username=username,
+                                   list_items=list_items,
+                                   error="empty_form")
 
-        # extract search results from search object
+        # search results
         search = Search()
         results = search.search(search_type, search_value, page_nr)
 
-        # return results page if all forms were filled in
+        # results page
         if search_type == "movies" or search_type == "series":
             return render_template("searched.html",
                                    results=results,
@@ -153,17 +156,8 @@ def search():
 def index():
     """ Index page """
     with app.app_context():
-        # extract user id 
-        user_id = session.get("user_id")
-
-        # extract username
-        if user_id:
-            user = User()
-            username = user.get_username(user_id)
-
-        # if logged out, username is empty
-        else:
-            username = ""
+        # extract user info
+        username = session.get("username")
 
     # return index page
     return render_template("index.html", username=username)
@@ -174,68 +168,25 @@ def index():
 def watchlist():
     """ Watchlist page """
     with app.app_context():
-        # extract user id
+        # extract user info
         user_id = session.get("user_id")
+        username = session.get("username")
 
-        # extract username
-        if user_id:
-            user = User()
-            username = user.get_username(user_id)
+    # list data
+    list_item = List()
+    list_items = list_item.get_all_items(user_id)
 
-        # if logged out, username is empty
-        else:
-            username = ""
-
-    # extract watchlist items
     watchlist = Watchlist()
     watchlist_tmdb = watchlist.get_all_items_user(user_id)
-
-    # extract personal list titles data
-    list_obj = List()
-    list_titles = list_obj.get_all_items(user_id)
-
-    # initialize movie and serie models
-    movies = Movie()
-    series = Serie()
-
-    # initialize watchlist dict
-    watchlist_data = {}
-
-    # iterate over watchlist items
-    for item in watchlist_tmdb:
-
-        # add movie to watchlist dict
-        if item.media_type == "movie":
-
-            # extract movie data
-            movie = movies.check_and_retrieve_database(item.tmdb_id)
-
-            # add movie data to watchlist dict
-            watchlist_data[item.tmdb_id] = [movie[0]]
-
-        # add serie to watchlist dict
-        elif item.media_type == "serie":
-
-            # extract serie data
-            serie = series.check_and_retrieve_database(item.tmdb_id)
-
-            # extract data for last episode watched
-            episodes = Episode()
-            last_episode = episodes.lookup_last_watched(item.tmdb_id, user_id)
-
-            # save serie object and last episode in list
-            item_list = [serie[0], last_episode]
-
-            # add serie data list to watchlist dict
-            watchlist_data[item.tmdb_id] = item_list
+    watchlist_data = get_list_dict(watchlist_tmdb, user_id)
 
     if request.method == "GET":
 
         # return watchlist page
         return render_template("watchlist.html",
+                               list_items=list_items,
                                watchlist_data=watchlist_data,
-                               username=username,
-                               list_titles=list_titles)
+                               username=username)
 
 
 @app.route("/watched", methods=["GET"])
@@ -243,69 +194,26 @@ def watchlist():
 def watched():
     """ Watched page """
     with app.app_context():
-        # extract user id
+        # extract user info
         user_id = session.get("user_id")
+        username = session.get("username")
 
-        # extract username
-        if user_id:
-            user = User()
-            username = user.get_username(user_id)
+    # list data
+    list_item = List()
+    list_items = list_item.get_all_items(user_id)
 
-        # if logged out, username is empty
-        else:
-            username = ""
-
-        # extract watched items
-        watched = Watched()
-        watched_tmdb = watched.get_all_items_user(user_id)
-
-        # extract personal list data
-        list_item = List()
-        list_items = list_item.get_all_items(user_id)
-
-        # initialize serie and movie models
-        movies = Movie()
-        series = Serie()
-
-        # initialize watched dict
-        watched_data = {}
-
-        # iterate over watched items
-        for item in watched_tmdb:
-
-            # add movie to watched dict
-            if item.media_type == "movie":
-
-                # extract movie data
-                movie = movies.check_and_retrieve_database(item.tmdb_id)
-
-                # add movie data to watched dict
-                watched_data[item.tmdb_id] = [movie[0]]
-
-            # add serie to watched dict
-            elif item.media_type == "serie":
-
-                # extract serie data
-                serie = series.check_and_retrieve_database(item.tmdb_id)
-
-                # extract data for last episode watched
-                episodes = Episode()
-                last_episode = episodes.lookup_last_watched(
-                    item.tmdb_id, user_id)
-
-                # save serie object and last episode in list
-                item_list = [serie[0], last_episode]
-
-                # add serie data to watched dict
-                watched_data[item.tmdb_id] = item_list
+    # watched data
+    watched = Watched()
+    watched_list = watched.get_all_items_user(user_id)
+    watched_data = get_list_dict(watched_list, user_id)
 
     if request.method == "GET":
 
         # return watched page
         return render_template("watched.html",
                                watched_data=watched_data,
-                               username=username,
-                               list_items=list_items)
+                               list_items=list_items,
+                               username=username)
 
 
 @app.route("/create_list/<media_type>/<tmdb_id>", methods=["GET", "POST"])
@@ -313,55 +221,36 @@ def watched():
 def create_list(media_type, tmdb_id):
     """ Create new list page """
     with app.app_context():
-
-        # extract user id
+        # extract user info
         user_id = session.get("user_id")
+        username = session.get("username")
 
-        # extract username
-        if user_id:
-            user = User()
-            username = user.get_username(user_id)
-
-        # if logged out, username is empty
-        else:
-            username = ""
-
-    # extract personal list data
+    # list data
     list_item = List()
     list_items = list_item.get_all_items(user_id)
 
     if request.method == "GET":
-
-        # return create list page
         return render_template("create_list.html",
-                               list_items=list_items,
                                username=username,
+                               list_items=list_items,
                                media_type=media_type,
                                tmdb_id=tmdb_id)
 
     elif request.method == "POST":
-
-        # get list title input
         list_title = request.form.get("list_title")
 
-        # return error statement if list_title is empty
+        # empty title error
         if not list_title:
-            return render_template("create_list.html", username=username,
-                                   list_items=list_items, error="empty_form",
-                                   media_type=media_type, tmdb_id=tmdb_id)
+            return render_template("create_list.html",
+                                   username=username,
+                                   list_items=list_items,
+                                   media_type=media_type,
+                                   tmdb_id=tmdb_id,
+                                   error="empty_form")
 
-        # add new list object
-        list_obj = List()
-        list_obj.add_item(list_title, user_id)
+        # add list and list item to new list
+        create_list_item(list_title, tmdb_id, user_id, media_type)
 
-        # add tmdb object to list object
-        list_item = ListItem()
-        list_item.add_item(list_title, tmdb_id, user_id, media_type)
-
-        # extract new personal list data
-        list_items = list_item.get_all_items(user_id, list_title)
-
-        # return new list page
         return redirect(f"/list/{list_title}")
 
 
@@ -370,62 +259,20 @@ def create_list(media_type, tmdb_id):
 def list(title):
     """ List page """
     with app.app_context():
-
-        # extract user id
+        # extract user info
         user_id = session.get("user_id")
-
-        # extract username
-        if user_id:
-            user = User()
-            username = user.get_username(user_id)
-
-        # if logged out, username is empty
-        else:
-            username = ""
+        username = session.get("username")
 
     # extract list items
-    list_item = ListItem()
+    list_item = List()
     list_items = list_item.get_all_items(user_id, title)
 
-    # initialize movie and serie models
-    movies = Movie()
-    series = Serie()
-
-    # initialize list dict
-    list_objects = {}
-
-    # iterate over all items in list dict
-    for item in list_items:
-
-        # add movie to list dict
-        if item.media_type == "movie":
-
-            # extract movie data
-            movie = movies.check_and_retrieve_database(item.tmdb_id)
-
-            # add movie data to list dict
-            list_objects[item.tmdb_id] = [movie[0]]
-
-        # add serie to list dict
-        elif item.media_type == "serie":
-
-            # extract serie data
-            serie = series.check_and_retrieve_database(item.tmdb_id)
-
-            # extract data for last episode watched
-            episodes = Episode()
-            last_episode = episodes.lookup_last_watched(item.tmdb_id, user_id)
-
-            # save serie object and last episode in list
-            item_list = [serie[0], last_episode]
-
-            # add serie data to dictionary
-            list_objects[item.tmdb_id] = item_list
+    list_data = get_list_dict(list_items, user_id)
 
     # return list page
     return render_template("list.html",
                            username=username,
-                           list_objects=list_objects,
+                           list_data=list_data,
                            list_title=title,
                            list_items=list_items)
 
@@ -435,31 +282,23 @@ def list(title):
 def series(tmdb_id):
     """ Series page """
     with app.app_context():
-
-        # extract user id
+        # extract user info
         user_id = session.get("user_id")
-
-        # extract username
-        if user_id:
-            user = User()
-            username = user.get_username(user_id)
-
-        # if logged out, username is empty
-        else:
-            username = ""
-
-    # initialize serie and episode models
-    serie = Serie()
-    episodes = Episode()
+        username = session.get("username")
 
     # extract personal list data
     list_item = List()
     list_items = list_item.get_all_items(user_id)
 
+    # initialize serie and episode models
+    serie = Serie()
+    episodes = Episode()
+
     # extract serie data
     serie_data = serie.check_and_retrieve_database(tmdb_id)[0]
+    season_data = get_season_data(serie_data, tmdb_id)
 
-    # extract watched episodes and last episode
+    # exntract watched episodes and last episode
     watched_episodes = episodes.lookup_watched_episodes(tmdb_id, user_id)
     last_episode = episodes.lookup_last_watched(tmdb_id, user_id)
 
@@ -470,18 +309,6 @@ def series(tmdb_id):
     # extract review data
     reviews = Review()
     all_reviews = reviews.get_all_reviews(tmdb_id)
-
-    # initialize season data dict
-    season_data = {}
-
-    # iterate over serie seasons
-    for season_nr in range(1, serie_data.seasons_amt+1):
-
-        # extract season details
-        season_details = serie.lookup_season_tmdb(tmdb_id, season_nr)
-
-        # add season data to season data dict
-        season_data[season_nr] = len(season_details["episodes"])
 
     if request.method == "GET":
         # return serie page
@@ -497,8 +324,6 @@ def series(tmdb_id):
                                in_watchlist=in_watchlist)
 
     elif request.method == "POST":
-
-        # extract form values
         list_type = request.form.get("list_value")
         media_type = "serie"
         submit_value = request.form.get("submit_value")
@@ -506,35 +331,25 @@ def series(tmdb_id):
 
         # button watchlist
         if list_type == 'add to watchlist' or list_type == "remove from watchlist":
-
-            # add/delete item from watchlist
             watchlist.update_item(tmdb_id, user_id, media_type)
-
-            # re-evaluate if serie in watchlist
             in_watchlist = serie.in_list("watchlist", user_id, tmdb_id)
 
         # button watched list
         if list_type == 'watched' or list_type == "unwatched":
-
-            # add/delete item from watched
-            watched = Watched()
             watched.update_item(tmdb_id, user_id, media_type)
 
-            #  if item also in watchlist, delete from watchlist
+            # remove item from watchlist
             if in_watchlist and list_type == "watched":
                 watchlist.update_item(tmdb_id, user_id, media_type)
                 in_watchlist = False
 
-            # re-evaluate if item in watched
             in_watched = serie.in_list("watched", user_id, tmdb_id)
 
         # button watched episodes
         if submit_value == "watched episodes":
+            checked_episodes = [form_value[form_value.index('_') + 1:]
+                                for form_value in request.form if form_value.startswith('episode')]
 
-            # extract checked episodes from form
-            checked_episodes = [form_value[form_value.index('_') + 1:] for form_value in request.form if form_value.startswith('episode')]
-
-            # remove unchecked episodes from database and add checked episodes
             episodes.evaluate_checked_episodes(tmdb_id, user_id, checked_episodes)
 
             # re-evaluate watched episodes and last episode watched
@@ -543,11 +358,9 @@ def series(tmdb_id):
 
         # button list
         if list_type == "list":
-
-            # extract form value
             list_title = request.form.get("list_title")
 
-            # do nothing if instruction text was submitted
+            # instruction text was submitted
             if list_title == "Add to personal list":
 
                 # return serie page
@@ -562,21 +375,16 @@ def series(tmdb_id):
                                        in_watched=in_watched,
                                        in_watchlist=in_watchlist)
 
-            # create new list
+            # new list
             elif list_title == "new_list":
-
-                # return new list page
                 return redirect(f"/create_list/{media_type}/{tmdb_id}")
 
             else:
-                # add item to existing list
-                list_item = ListItem()
+                # existing list
                 list_item.add_item(list_title, tmdb_id, user_id, media_type)
 
         # add review
         if request.form.get("review"):
-
-            # extract form values
             review = request.form.get("review")
             rating = request.form.get("rating")
 
@@ -610,8 +418,6 @@ def series(tmdb_id):
 
             # add review
             add_review = reviews.add_review(tmdb_id, user_id, rating, review)
-
-            # re-evaluate reviews list
             all_reviews = reviews.get_all_reviews(tmdb_id)
 
             # only add one review per person
@@ -646,18 +452,9 @@ def series(tmdb_id):
 def movies(tmdb_id):
     """ Movie page """
     with app.app_context():
-
-        # extract user id
+        # extract user info
         user_id = session.get("user_id")
-
-        # extract username
-        if user_id:
-            user = User()
-            username = user.get_username(user_id)
-
-        # if logged out, username is empty
-        else:
-            username = ""
+        username = session.get("username")
 
     # extract movie data
     movie = Movie()
@@ -692,17 +489,11 @@ def movies(tmdb_id):
 
         # button watchlist
         if list_type == 'add to watchlist' or list_type == "remove from watchlist":
-
-            # add/delete item from watchlist
             watchlist.update_item(tmdb_id, user_id, media_type)
-
-            # re-evaluate if item in watchlist
             in_watchlist = movie.in_list("watchlist", user_id, tmdb_id)
 
         # button watched
         if list_type == 'watched' or list_type == "unwatched":
-
-            # add/delete item from watched list
             watched = Watched()
             watched.update_item(tmdb_id, user_id, media_type)
 
@@ -791,7 +582,6 @@ def movies(tmdb_id):
 def register():
     """Register user"""
     if request.method == "GET":
-
         # return register page
         return render_template("register.html")
 
@@ -819,15 +609,11 @@ def register():
             return render_template("register.html", password=password, error="password_incorrect")
 
         # register user in database
-        with app.app_context():
-            user = User()
-
-            # error if not username already exists
-            if not user.register_user(username, password):
-                return render_template("register.html", error="username_unavailable")
+        if not user.register_user(username, password):
+            return render_template("register.html", error="username_unavailable")
 
         # return login page
-        return render_template("login.html")
+        return redirect("/login")
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -837,36 +623,33 @@ def login():
     # forget old user_id
     session.clear()
 
-    # user reached route via GET
     if request.method == "GET":
-
         return render_template("login.html")
 
-    # user reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
-
-        # extract form values
+        # form values
         username = request.form.get("username")
         password = request.form.get("password")
+        user = User()
 
-        # return error statement if empty username
+        # empty username page
         if not request.form.get("username"):
             return render_template("login.html", error="empty_form")
 
-        # return error statement if empty password
+        # empty password page
         elif not request.form.get("password"):
             return render_template("login.html", error="empty_form")
 
-        # return error statement if password is incorrect
-        user = User()
+        # password incorrect page
         if not user.login_user(username, password):
             return render_template("login.html", error="password_incorrect")
 
-        # Remember which user has logged in
+        # Remember user
         session["user_id"] = user.get_id_user(username)
+        session["username"] = username
 
         # Redirect user to home page
-        return render_template("index.html", username=username)
+        return redirect("/")
 
 
 @app.route("/logout")

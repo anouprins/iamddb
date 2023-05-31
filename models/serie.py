@@ -2,8 +2,22 @@
 Serie model to manipulate "series" table in IAMDDB database
 
 Serie data is retrieved by connecting to free TMDB database with personal API key, if movie data not yet in IAMDDB database.
-The relevant data is then added to IAMDDB database for future use.
+The relevant data, is then added to IAMDDB database for future use.
 Source -- https://developer.themoviedb.org/docs
+
+Functions
+lookup_serie_tmdb -- retrieves serie data from TMDB database
+lookup_serie_iamddb -- retrieves serie data from IAMDDB database
+lookup_season_tmdb -- Retrieves season data for serie from TMDB database
+successful_tmdb -- checks if request with TMDB database was successful
+check_and_retrieve_database -- checks if serie in IAMDDB database,
+-- if not: retrieves it using lookup_serie_tmdb and adds it to IAMDDB database using , then retrieves it from IAMDDB database
+-- if yes: retrieves it from IAMDDB database
+in_database_iamddb -- checks if serie data in IAMDDB database
+add_database_iamddb -- adds relevant serie details to IAMDDB database
+in_list -- checks if serie in watchlist or watched list
+
+by: Anou Prins
 """
 
 import requests
@@ -17,7 +31,6 @@ from .to_watch import Watchlist
 
 
 class Serie():
-    """ class Serie to manipulate "series" table in database """
     def lookup_serie_tmdb(self, tmdb_id: str) -> Union[dict, None]:
         """ Returns all serie information in json using TMDB api
         Parameters
@@ -53,6 +66,7 @@ class Serie():
 
     def lookup_season_tmdb(self, tmdb_id: str, season_nr: int) -> Union[dict, None]:
         """ Returns all season information in json using TMDB Api
+        Parameters
         tmdb_id -- tmdb id
         season_nr -- season number
 
@@ -208,7 +222,7 @@ class Serie():
     def in_list(self, list_title: str, user_id: int, tmdb_id: str) -> bool:
         """ Returns True if serie in list object, False otherwise
         Parameters
-        list_title -- list title
+        list_title -- list title: watchlist/watched
         user_id -- user id
         tmdb_id -- tmdb id
 
@@ -230,9 +244,4 @@ class Serie():
             list_obj = Watched()
             return list_obj.connection_exists(tmdb_id, user_id)
 
-        # list
-        else:
-
-            # see if serie in list
-            list_obj = List()
-            return list_obj.item_exists(tmdb_id, user_id, list_title)
+        return False

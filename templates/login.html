@@ -1,20 +1,8 @@
 {% extends "layout.html" %}
-
-{% block title %}
-Login
-{% endblock %}
-
 {% block main %}
 
-<h>
-  {% if error == "password_incorrect" %}
-  Username did not match password, try again.
-  {% endif %}
-  {% if error == "empty_form" %}
-  Make sure to fill out all the boxes to sign in, try again.
-  {% endif %}
-
-</h>
+<title>Login</title>
+<div class="text_page">
 <form action="/login" method="post">
   <div class="d-flex align-items-center">
     <div class="mx-auto">
@@ -24,4 +12,14 @@ Login
     </div>
   </div>
 </form>
+<div class="error_message">
+    {% if error == "empty_form" %}
+    Make sure to fill in all the forms!
+    {% endif %}
+    {% if error == "password_incorrect" %}
+    Incorrect password and/or username.
+    {% endif %}
+</div>
+
+</div>
 {% endblock %}

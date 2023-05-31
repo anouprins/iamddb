@@ -1,4 +1,12 @@
-""" List model to manipulate list database """
+"""
+List model to manipulate table "lists" in IAMDDB database
+
+Functions
+add_item -- makes use of item_exists and create_item to add item to database
+item_exists -- checks if list exists
+create_item -- adds item to database
+
+"""
 
 
 from ..db.models import db
@@ -7,7 +15,7 @@ from ..db.models import List as ListDB
 
 class List():
     def add_item(self, title: str, user_id: int) -> None:
-        """ Creates list item
+        """ Uses item_exists and create_item to add item to IAMDDB database
         Parameters
         title -- list title
         user_id -- user id """
@@ -26,8 +34,9 @@ class List():
         bool -- True if item exists in iamddb database, False otherwise"""
 
         # extract item from database
-        items = db.session.query(ListDB).filter(ListDB.title==title,
-                                                ListDB.user_id==user_id).all()
+        items = db.session.query(ListDB).filter(
+            ListDB.title==title,
+            ListDB.user_id==user_id).all()
 
         # item does not exist
         if items == []:
@@ -58,5 +67,6 @@ class List():
         items -- list of all list items for user"""
 
         # extract list items from iamddb database
-        items = db.session.query(ListDB).filter(ListDB.user_id==user_id).all()
+        items = db.session.query(ListDB).filter(
+            ListDB.user_id==user_id).all()
         return items

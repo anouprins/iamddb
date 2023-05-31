@@ -1,3 +1,7 @@
+"""
+Creates all tables written in directory "db/" for IAMDDB database
+"""
+
 import os
 
 

@@ -1,7 +1,17 @@
+"""
+Model to make searches for movies and serie data using TMDB database.
+
+Functions
+search -- retrieves movie/serie search results
+search_movies -- retrieves movie data using TMDB database
+search_series -- retrieves serie data using TMDB database
+
+by: Anou Prins
+"""
 import requests
 
-class Search():
 
+class Search():
     def search(self, search_type: str, search_value, page_nr: int):
         """ Returns search results for given search value """
         if search_type == "movies":

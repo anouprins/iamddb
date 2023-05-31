@@ -28,28 +28,49 @@ class Taste():
         # get all items watchlist
         items = self.get_all_tmdb_watchlist(user_id)
 
-        # if watchlist is empty, the score is 0xo
+        # if watchlist is empty, the score is 0
         if items == []:
             return 0
 
+        # return score
         return self.calculate_score(items)
 
     def get_all_tmdb_watchlist(self, user_id: int) -> list:
-        """ Returns a list of all tmdb items in watchlist """
+        """ Returns a list of all items in watchlist connecting to IAMDDB database
+        Parameters
+        user_id -- user id
+
+        Returns
+        items -- list of all items in watchlist"""
+
+        # extract watchlist items from IAMDDB database
         watchlist = Watchlist()
         items = watchlist.get_all_items_user(user_id)
         return items
 
-    def calculate_score(self, watchlist_items: list) -> list:
-        """ Returns accumulation of all tmdb scores """
+    def calculate_score(self, watchlist_items: list) -> float:
+        """ Returns accumulation of all tmdb scores
+        Parameters
+        watchlist_items -- list of all watchlist items
+
+        Returns
+        score -- average popularity score of watchlist items"""
 
         total_score = 0
+
+        # define amount of items in watchlist
         items_amt = len(watchlist_items)
 
+        # iterate over watchlist items
         for item in watchlist_items:
+
+            # extract popularity score using TMDB database
             score = self.get_popularity_score(item.tmdb_id, item.media_type)
+
+            # add score to total score
             total_score += score
 
+        # calculate average score
         score = total_score / items_amt
         return score
 

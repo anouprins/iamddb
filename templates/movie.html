@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block main %}
-
+<title>{{ movie.title }}</title>
 <p>
     <img src="https://image.tmdb.org/t/p/w200{{ movie.poster_path }}" alt="No poster provided."></img>
 </p>
@@ -64,12 +64,19 @@
 	    <option value="1">1 star</option>
 	  </select>
     </div>
-	<br>
-	    <button class="btn btn-primary" type="submit">Add Review</button>
-	</td>
-    </tr>
-  </table>
+    <br>
+    <button class="btn btn-primary" type="submit">Add Review</button>
 </form>
+<div class="error_message">
+    {% if error == "empty_form" %}
+    Make sure to fill in all the forms!
+    {% endif %}
+    {% if error == "review_unavailable" %}
+    You can only review this serie once.
+    {% endif %}
+    
+</div>
+
 <br><br><br>
 
 {% if all_reviews %}

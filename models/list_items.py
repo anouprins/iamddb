@@ -1,4 +1,15 @@
-""" ListItem model to manipulate ListItem in database """
+"""
+Model to manipulate ListItem in IAMDDB database
+
+Functions
+add_item -- makes use of item_exists and create_item to add item to database
+create_item -- adds list item to database
+item_exists -- checks if list item in database
+get_list_id -- returns list id
+get_serie_object -- returns serie object
+
+by: Anou Prins
+"""
 
 from typing import Union
 

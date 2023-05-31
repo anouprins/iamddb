@@ -1,12 +1,9 @@
 {% extends "layout.html" %}
 
-{% block title %}
-Login
-{% endblock %}
 
 {% block main %}
-
-<title>Create Lists</title>
+<title>Create new List</title>
+<div class="text_page">
     <form action="/create_list/{{media_type}}/{{tmdb_id}}" method="post">
 	<div class="d-flex align-items-center">
 	    <div class="mx-auto">
@@ -15,5 +12,11 @@ Login
 	    </div>
 	</div>
     </form>
+    <div class="error_message">
+	{% if error == "empty_form" %}
+	Make sure to fill in all the forms!
+	{% endif %}
+    </div>
+</div>
 {% endblock %}
 
