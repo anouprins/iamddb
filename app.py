@@ -330,6 +330,7 @@ def series(tmdb_id):
         media_type = "serie"
         submit_value = request.form.get("submit_value")
         watchlist = Watchlist()
+        watched = Watched()
 
         # button watchlist
         if list_type == 'add to watchlist' or list_type == "remove from watchlist":
