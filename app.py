@@ -289,8 +289,8 @@ def series(tmdb_id):
         username = session.get("username")
 
     # extract personal list data
-    list_item = List()
-    list_items = list_item.get_all_items(user_id)
+    list_obj = List()
+    list_items = list_obj.get_all_items(user_id)
 
     # initialize serie and episode models
     serie = Serie()
@@ -384,6 +384,7 @@ def series(tmdb_id):
 
             else:
                 # existing list
+                list_item = ListItem()
                 list_item.add_item(list_title, tmdb_id, user_id, media_type)
 
         # add review
