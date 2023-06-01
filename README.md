@@ -19,8 +19,8 @@ This app has a feature where the popularity score of the watchlist can be calcul
 
 ## screencast
 
- <video style="width: 50%">
-  <source src="screencastIAMDDB.webm" type="video/webm">
+ <video width="320" height="240" controls>
+  <source src="/read_me/screencastIAMDDB.webm" type="video/webm">
 </video> 
 
 ## source
