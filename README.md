@@ -42,8 +42,6 @@ psql postgres
 
 ### debugger in terminal
 
-http://127.0.0.1:5000/
-
 export DATABASE_URL="postgresql://postgres:horizontal_smeller18*@localhost/iamddb"
 
 flask --app app.py --debug run
@@ -53,3 +51,5 @@ flask --app app.py --debug run
 python3 create.py
 
 ### view web application
+
+http://127.0.0.1:5000/
