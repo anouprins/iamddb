@@ -36,3 +36,14 @@ class Review():
         """ Returns all reviews from database in dictionary """
         reviews = ReviewDB.query.filter(ReviewDB.tmdb_id==tmdb_id).order_by(ReviewDB.tmdb_id).all()
         return reviews
+
+    def lookup_review(self, tmdb_id: int, user_id: int):
+        """ Returns review from database by given user and for given book """
+        review = ReviewDB.query.filter(ReviewDB.tmdb_id == tmdb_id, ReviewDB.user_id == user_id).all()
+        return review
+
+    def lookup_username(self, user_id: int) -> str:
+        """ Returns username from user id in string """
+        user = User()
+        username = user.get_username(user_id)
+        return username

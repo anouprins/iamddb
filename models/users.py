@@ -68,3 +68,8 @@ class User():
         if self.lookup_user(username) != []:
             return False
         return True
+
+    def get_username(self, user_id: int) -> str:
+        """ Returns username from user id in string """
+        user = UserDB.query.filter_by(id=user_id).all()[0]
+        return user.username
