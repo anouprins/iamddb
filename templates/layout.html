@@ -19,14 +19,14 @@
 
 	    </button>
 	    {% endif %}
-	    <div class="navbar_color">
 		<div class="collapse navbar-collapse" id="navbar">
 		    <ul class="navbar-nav me-auto mt-2">
-			<li class="nav-item"><a class="nav-link" href="/search">Lookup Movies / Series</a></li>
-			{% if session["user_id"] %}
-			<li class="nav-item"><a class="nav-link" href="/watchlist">Watchlist</a></li>
-			<li class="nav-item"><a class="nav-link" href="/watched">Watched</a></li>
-			<li class="nav-item"><a class="nav-link" href="/taste">Taste?</a></li>
+
+			    <li class="nav-item"><a class="nav-link" href="/search">Lookup Movies / Series</a></li>
+			    {% if session["user_id"] %}
+			    <li class="nav-item"><a class="nav-link" href="/watchlist">Watchlist</a></li>
+			    <li class="nav-item"><a class="nav-link" href="/watched">Watched</a></li>
+			    <li class="nav-item"><a class="nav-link" href="/taste">Taste?</a></li>
 
 			<div class="dropdown" class="dark">
 			    <a class="btn btn-dark dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">

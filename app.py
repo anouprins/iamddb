@@ -616,6 +616,8 @@ def register():
         if not pwd_match(password, confirmation):
             return render_template("register.html", password=password, error="password_incorrect")
 
+        user = User()
+
         # register user in database
         if not user.register_user(username, password):
             return render_template("register.html", error="username_unavailable")

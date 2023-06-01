@@ -17,6 +17,12 @@ This app has a feature where the popularity score of the watchlist can be calcul
 
 <img src="/read_me/watchlist_page.png" style="width: 50%;">
 
+## screencast
+
+ <video style="width: 50%">
+  <source src="screencastIAMDDB.webm" type="video/webm">
+</video> 
+
 ## source
 
 To retrieve movie and serie data, this apps uses the TMDB database.
