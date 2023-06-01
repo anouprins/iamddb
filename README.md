@@ -11,11 +11,11 @@ For series it is also possible to check episodes as watched.
 It is possible to add a review.
 This app has a feature where the popularity score of the watchlist can be calculated and showed.
 
-<img src="/read_me/serie_page.jpeg" style="width: 50%;">
+<img src="/read_me/serie_page.png" style="width: 50%;">
 
-<img src="/read_me/taste_page.jpeg" style="width: 50%;">
+<img src="/read_me/taste_page.png" style="width: 50%;">
 
-<img src="/read_me/watchlist_page.jpeg" style="width: 50%;">
+<img src="/read_me/watchlist_page.png" style="width: 50%;">
 
 ## source
 
